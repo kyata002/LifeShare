@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/repass_border"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C3000000"
+    >
+
+    <LinearLayout
+        android:id="@+id/rename_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:background="@drawable/bg_dialog"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:text="Permission"
+            android:textColor="#000"
+            android:textSize="@dimen/_18sdp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/shape_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ứng dụng cần sử dụng và truy cập quyền quản lý truy cập tất cả tệp. Chúng tôi xin phép bạn cung cấp quyền truy cập tất cả tệp."
+                android:textColor="#000"
+                android:textSize="@dimen/_14sdp"
+                />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:backgroundTint="#EFEFEF"
+
+            android:gravity="center"
+            android:weightSum="2">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/bt_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_cancel_per"
+                android:gravity="center"
+                android:text="Hủy"
+                android:textStyle="bold"
+                android:textSize="@dimen/_16sdp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/bt_allow"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_access_per"
+                android:gravity="center"
+                android:text="Đồng ý"
+                android:textColor="#FFF"
+                android:textStyle="bold"
+                android:textSize="@dimen/_16sdp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

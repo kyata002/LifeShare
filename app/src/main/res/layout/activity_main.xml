@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_48sdp"
+        android:background="#FFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/lc_Search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:background="@drawable/bg_search"
+            android:orientation="horizontal"
+            android:padding="@dimen/_4sdp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/bt_BackS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_back" />
+
+            <EditText
+                android:id="@+id/de_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Search..."
+                android:maxLines="1"
+                android:textColor="#000"
+                android:textColorHint="#CC9F9D9D"
+                android:textSize="@dimen/_12sdp" />
+
+            <ImageView
+                android:id="@+id/bt_clears"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_clear_search" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lc_Main"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:background="#FFF"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_app" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:text="LIFE SHARE"
+                    android:textSize="@dimen/_18sdp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/bt_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_sreach" />
+
+                <ImageView
+                    android:id="@+id/bt_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_accout" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_10sdp"
+        app:layout_constraintBottom_toTopOf="@id/tab_Menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_Menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabIconTint="@color/tab_icon_color"
+        app:tabIndicator="@drawable/selector"
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabIndicatorGravity="stretch"
+        app:tabMode="fixed"
+        app:tabSelectedTextAppearance="@color/white"
+        app:tabSelectedTextColor="#FFF"
+        app:tabTextAppearance="@style/MyCustomTextAppearance"
+        app:tabTextColor="#000" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
