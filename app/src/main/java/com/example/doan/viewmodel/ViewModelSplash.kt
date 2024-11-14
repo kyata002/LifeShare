@@ -17,14 +17,16 @@ import com.example.doan.ui.dialog.PermissionRequestDialog
 import java.io.File
 
 class SplashViewModel(application: Application) : AndroidViewModel(application) {
+
     private val _files = MutableLiveData<List<File>>()
     val files: LiveData<List<File>> get() = _files
+
     private val _navigateTo = MutableLiveData<Class<*>>()
     val navigateTo: LiveData<Class<*>> = _navigateTo
 
     private val countDownTimer = object : CountDownTimer(5000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-
+            // You can implement something here to show countdown if needed
         }
 
         override fun onFinish() {
@@ -43,48 +45,52 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
     private fun checkPermission(): Boolean {
         val context = getApplication<Application>().applicationContext
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
+            Environment.isExternalStorageManager() // For Android 11 and above
         } else {
             SplashActivity.PERMISSIONS_STORAGE.all { permission ->
                 context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
             }
         }
     }
-    fun loadFile(context: Context, type: String): ArrayList<File> {
-        val list = ArrayList<File>()
+
+    // Load files of specific type
+    private fun loadFilesOfType(context: Context, type: String): List<File> {
+        val list = mutableListOf<File>()
         val table = MediaStore.Files.getContentUri("external")
         val selection = "_data LIKE '%.$type'"
 
         var cursor: Cursor? = null
         try {
             cursor = context.contentResolver.query(table, null, selection, null, null)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        try {
-            if (cursor == null || cursor.count <= 0 || !cursor.moveToFirst()) {
-                // this means error, or simply no results found
-                return list
-            }
-            val data = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-
-            do {
-                val path = cursor.getString(data)
-                val file = File(path)
-                if (file.length() == 0L) {
-                    continue
+            cursor?.let {
+                if (it.moveToFirst()) {
+                    val dataColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+                    do {
+                        val filePath = it.getString(dataColumn)
+                        val file = File(filePath)
+                        if (file.length() > 0) {
+                            list.add(file)
+                        }
+                    } while (it.moveToNext())
                 }
-                list.add(file)
-            } while (cursor.moveToNext())
+            }
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
 
         return list
     }
-    fun loadFiles(type: String) {
-        // Load files based on the type
-        val fileList = loadFile(getApplication(), type)
-        _files.postValue(fileList)
+
+    // Method to get files of multiple types
+    fun getFileList() {
+        val types = listOf("xlsx", "pdf", "mp4","mp3","txt","jpg") // Add more file types as needed
+        val allFiles = mutableListOf<File>()
+        types.forEach { type ->
+            val filesOfType = loadFilesOfType(getApplication<Application>().applicationContext, type)
+            allFiles.addAll(filesOfType)
+        }
+        _files.postValue(allFiles)
     }
 }

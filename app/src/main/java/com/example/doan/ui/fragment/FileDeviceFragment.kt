@@ -47,6 +47,6 @@ class FileDeviceFragment : Fragment() {
         }
 
 
-        viewModel.loadFiles("pdf")
+        viewModel.getFileList();
     }
 }

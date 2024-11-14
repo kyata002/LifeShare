@@ -54,7 +54,7 @@
                     android:singleLine="true"
                     android:text="@string/app_name"
                     android:textColor="#838388"
-                    android:textSize="@dimen/_10sdp"
+                    android:textSize="@dimen/_8sdp"
                     android:textStyle="bold"
                     android:maxLines="2"/>
                 <TextView
@@ -68,30 +68,41 @@
                     android:gravity="right"
                     android:text="@string/app_name"
                     android:textColor="#838388"
-                    android:textSize="@dimen/_10sdp"
+                    android:textSize="@dimen/_8sdp"
                     android:textStyle="bold" />
             </LinearLayout>
+            <TextView
+                android:id="@+id/tvtype"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textColor="#838388"
+                android:textSize="@dimen/_8sdp"
+                android:textStyle="bold"
+                android:maxLines="2"/>
 
 
         </LinearLayout>
 
-        <CheckBox
+        <ImageView
             android:id="@+id/favorite_checked"
             android:layout_width="@dimen/_26sdp"
-            android:layout_height="@dimen/_50sdp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_gravity="center"
             android:layout_marginRight="@dimen/_4sdp"
-            android:button="@drawable/ic_favorite_check"
+            android:src="@drawable/ic_upload"
             android:checked="false"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <Button
+        <ImageView
             android:id="@+id/more_options"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:background="@drawable/ic_more"
-            android:tint="?attr/colorOnSurface"
         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
             />
 
