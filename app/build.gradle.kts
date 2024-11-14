@@ -48,6 +48,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("com.intuit.sdp:sdp-android:1.1.1")
-    implementation ("com.airbnb.android:lottie:6.6.0")
+    implementation (libs.sdp.android)
+    implementation (libs.lottie)
+        // Other dependencies
+        implementation (libs.androidx.lifecycle.viewmodel.ktx )// Use the latest version available
 }
