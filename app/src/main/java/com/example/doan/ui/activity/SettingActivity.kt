@@ -1,20 +1,27 @@
 package com.example.doan.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.widget.LinearLayout
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.R
-import com.example.doan.databinding.ActivityMainBinding
 import com.example.doan.databinding.ActivitySettingBinding
+import java.io.File
+import java.net.URLConnection
 
 @Suppress("DEPRECATION")
 class SettingActivity : AppCompatActivity() {
+
+    val POLICY_URL: String = "https://firebasestorage.googleapis.com/v0/b/compass-app-df4f4.appspot.com/o/Privacy_Policy_ExcelReader.html?alt=media&token=fcb1f0bf-52ce-4b87-b845-b59f8ee0f9d8"
+
     private lateinit var binding: ActivitySettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +36,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
         binding.btnSettingShare.setOnClickListener {
-            // Xử lý sự kiện cho Chia sẻ ứng dụng
-            Toast.makeText(this, "Chia sẻ ứng dụng", Toast.LENGTH_SHORT).show()
+            shareApp(this)
         }
 
         binding.btnSettingFeed .setOnClickListener {
@@ -39,8 +45,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
         binding.btnSettingPri.setOnClickListener {
-            // Xử lý sự kiện cho Chính sách ứng dụng
-            Toast.makeText(this, "Chính sách ứng dụng", Toast.LENGTH_SHORT).show()
+            showPolicy(this)
         }
         binding.btnSettingBack.setOnClickListener {
             onBackPressed()
@@ -58,4 +63,31 @@ class SettingActivity : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
         }
     }
+    fun shareApp(context: Context) {
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        sharingIntent.setType("text/plain")
+        val shareBody =
+            "https://play.google.com/store/apps/details?id=" + context.packageName
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "")
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
+        context.startActivity(Intent.createChooser(sharingIntent, "Share to"))
+    }
+    fun showPolicy(context: Context?) {
+        context?.let { openWeb(it, POLICY_URL) }
+    }
+    fun openWeb(context: Context, url: String?) {
+        try {
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW, Uri.parse(
+                        url
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
 }
