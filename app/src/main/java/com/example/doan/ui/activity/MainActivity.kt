@@ -3,6 +3,9 @@ package com.example.doan.ui.activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -12,12 +15,12 @@ import com.example.doan.databinding.ActivityMainBinding
 import com.example.doan.ui.activity.LoginActivity
 import com.example.doan.viewmodel.ViewModelMain
 import com.google.android.material.tabs.TabLayoutMediator
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: ViewModelMain by viewModels()
 
-    // SharedPreferences để lưu trạng thái đăng nhập
     private val sharedPreferences: SharedPreferences by lazy {
         getSharedPreferences("user_prefs", MODE_PRIVATE)
     }
@@ -27,13 +30,43 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupViewPagerWithTabs()
+        binding.viewPage.currentItem = 1
+
+        binding.btnAccount.setOnClickListener {
+            val popupMenu = PopupMenu(this, binding.btnAccount)
+            popupMenu.menuInflater.inflate(R.menu.file_options_main, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.option_profile -> {
+                        navigateToActivity(ProfileActivity::class.java)
+                        true
+                    }
+
+                    R.id.option_setting -> {
+                        Toast.makeText(this, "Cài đặt selected", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+
+                    R.id.option_logout -> {
+                        Toast.makeText(this, "Chi tiết selected", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+            // Show the popup menu
+            popupMenu.show()
+        }
     }
 
     private fun setupViewPagerWithTabs() {
         val adapter = MainPagerAdapter(this) {
-            // Kiểm tra đăng nhập và chỉ chuyển hướng khi chưa đăng nhập
             if (!isUserLoggedIn()) {
-                navigateToLogin()
+                navigateToActivity(LoginActivity::class.java)
+
             }
         }
 
@@ -45,10 +78,12 @@ class MainActivity : AppCompatActivity() {
                     tab.text = "File Device"
                     tab.setIcon(R.drawable.ic_file_device)
                 }
+
                 1 -> {
                     tab.text = "File Com"
                     tab.setIcon(R.drawable.ic_file_community)
                 }
+
                 2 -> {
                     tab.text = "File Share"
                     tab.setIcon(R.drawable.ic_file_share)
@@ -56,24 +91,22 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
     }
-    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
-    override fun onBackPressed() {
-        if (binding.viewPage.currentItem != 0) {
-            binding.viewPage.currentItem = 0 // Quay lại tab "File Device" (tab 0)
-        } else {
-            super.onBackPressed() // Nếu đang ở tab đầu tiên, thực hiện hành động quay lại mặc định
-        }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.file_options_main, menu)
+        return true
     }
 
+
+
+
     private fun isUserLoggedIn(): Boolean {
-        // Kiểm tra trạng thái đăng nhập từ SharedPreferences
         return sharedPreferences.getBoolean("isLoggedIn", false)
     }
 
-    private fun navigateToLogin() {
-        // Kiểm tra xem LoginActivity đã được mở chưa
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    private fun navigateToActivity(targetActivity: Class<*>) {
+        val intent = Intent(this, targetActivity)
         startActivity(intent)
     }
+
 }

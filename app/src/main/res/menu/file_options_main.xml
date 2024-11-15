@@ -2,20 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/option_share"
+        android:id="@+id/option_profile"
         android:title="Thông tin"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/option_rename"
+        android:id="@+id/option_setting"
         android:title="Cài đặt"
         app:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/option_delete"
-        android:title="ng"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/option_detail"
-        android:icon="@drawable/ic_detail"
-        android:title="Chi tiết"
+        android:id="@+id/option_logout"
+        android:title="Đăng xuất"
         app:showAsAction="ifRoom" />
 </menu>

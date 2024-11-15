@@ -1,0 +1,210 @@
+<!-- res/layout/activity_profile.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_profile"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Nút Quay Lại ở góc trên bên trái -->
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:src="@drawable/ic_back"
+        android:contentDescription="Back Button"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Biểu tượng Account ở trên cùng -->
+    <ImageView
+        android:id="@+id/ivAccountIcon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Account Icon"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_accout"
+        app:tint="@android:color/darker_gray" />
+
+    <!-- Tiêu đề Profile -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        android:text="Thông tin tài khoản"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Tên người dùng -->
+    <LinearLayout
+        android:background="@drawable/bg_row_profile"
+        android:padding="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:weightSum="12">
+        <TextView
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Tên"
+            android:textStyle="bold" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/tvUsername"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:text="User Name" />
+
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:text="User Name"/>
+
+        <ImageView
+            android:id="@+id/ivEditUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit Username"
+            android:src="@drawable/ic_edit" />
+    </LinearLayout>
+
+    <!-- Email -->
+    <LinearLayout
+        android:background="@drawable/bg_row_profile"
+        android:padding="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:weightSum="12">
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Email:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:id="@+id/tvEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:text="user@example.com" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:text="user@example.com"/>
+
+        <ImageView
+            android:id="@+id/ivEditEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit Email"
+            android:src="@drawable/ic_edit" />
+    </LinearLayout>
+
+    <!-- Số điện thoại -->
+    <LinearLayout
+        android:background="@drawable/bg_row_profile"
+        android:padding="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:weightSum="12">
+
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Số điện thoại:"
+            android:textStyle="bold" />
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/tvPhoneNumber"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:text="+1234567890" />
+
+        <EditText
+            android:id="@+id/etPhoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:visibility="gone"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:text="+1234567890"/>
+
+        <ImageView
+            android:id="@+id/ivEditPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit Phone Number"
+            android:src="@drawable/ic_edit" />
+    </LinearLayout>
+
+    <!-- Nút Lưu và Hủy -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:id="@+id/btnContainer">
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black"
+            android:text="Lưu" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy"
+            android:backgroundTint="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
+</LinearLayout>

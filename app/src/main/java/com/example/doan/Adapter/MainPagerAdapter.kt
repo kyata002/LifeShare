@@ -23,7 +23,7 @@ class MainPagerAdapter(
                 FileCommunityFragment()
             }
             else -> {
-                onRequestLogin() // Kiểm tra và yêu cầu đăng nhập nếu cần
+//                onRequestLogin() // Kiểm tra và yêu cầu đăng nhập nếu cần
                 FileShareFragment()
             }
         }
