@@ -2,21 +2,22 @@ package com.example.doan.ui.activity
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
+import androidx.core.content.ContextCompat
 import com.example.doan.Adapter.MainPagerAdapter
 import com.example.doan.R
 import com.example.doan.databinding.ActivityMainBinding
-import com.example.doan.ui.activity.LoginActivity
 import com.example.doan.viewmodel.ViewModelMain
 import com.google.android.material.tabs.TabLayoutMediator
 import android.widget.Toast
+import androidx.core.view.WindowInsetsControllerCompat
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: ViewModelMain by viewModels()
@@ -29,8 +30,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupStatusBar()
         setupViewPagerWithTabs()
-        binding.viewPage.currentItem = 1
 
         binding.btnAccount.setOnClickListener {
             val popupMenu = PopupMenu(this, binding.btnAccount)
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     R.id.option_setting -> {
-                        Toast.makeText(this, "Cài đặt selected", Toast.LENGTH_SHORT).show()
+                        navigateToActivity(SettingActivity::class.java)
                         true
                     }
 
@@ -56,9 +58,19 @@ class MainActivity : AppCompatActivity() {
                     else -> false
                 }
             }
-
-            // Show the popup menu
             popupMenu.show()
+        }
+    }
+
+    private fun setupStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Đặt nền của thanh trạng thái
+            window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
+
+            // Đặt màu biểu tượng (tối hoặc sáng)
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true // hoặc false cho biểu tượng sáng
+        } else {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
         }
     }
 
@@ -66,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = MainPagerAdapter(this) {
             if (!isUserLoggedIn()) {
                 navigateToActivity(LoginActivity::class.java)
-
             }
         }
 
@@ -78,12 +89,10 @@ class MainActivity : AppCompatActivity() {
                     tab.text = "File Device"
                     tab.setIcon(R.drawable.ic_file_device)
                 }
-
                 1 -> {
                     tab.text = "File Com"
                     tab.setIcon(R.drawable.ic_file_community)
                 }
-
                 2 -> {
                     tab.text = "File Share"
                     tab.setIcon(R.drawable.ic_file_share)
@@ -97,9 +106,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
-
-
     private fun isUserLoggedIn(): Boolean {
         return sharedPreferences.getBoolean("isLoggedIn", false)
     }
@@ -108,5 +114,4 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, targetActivity)
         startActivity(intent)
     }
-
 }

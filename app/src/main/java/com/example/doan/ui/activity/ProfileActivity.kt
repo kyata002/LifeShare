@@ -1,5 +1,7 @@
 package com.example.doan.ui.activity
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.InputDevice
 import android.view.MotionEvent
@@ -7,10 +9,13 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.R
 import com.example.doan.databinding.ActivityProfileBinding
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 
+@Suppress("DEPRECATION")
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
 
@@ -20,7 +25,7 @@ class ProfileActivity : AppCompatActivity() {
         // Inflate the layout using ViewBinding
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setupStatusBar()
         val editIcons = listOf(binding.ivEditUsername, binding.ivEditEmail, binding.ivEditPhoneNumber)
         val textViews = listOf(binding.tvUsername, binding.tvEmail, binding.tvPhoneNumber)
         val editTexts = listOf(binding.etUsername, binding.etEmail, binding.etPhoneNumber)
@@ -92,6 +97,18 @@ class ProfileActivity : AppCompatActivity() {
         val view = currentFocus ?: binding.root  // Fallback to root view if no focus
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+    @SuppressLint("ObsoleteSdkInt")
+    private fun setupStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Đặt nền của thanh trạng thái
+            window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
+
+            // Đặt màu biểu tượng (tối hoặc sáng)
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true // hoặc false cho biểu tượng sáng
+        } else {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
+        }
     }
 }
 

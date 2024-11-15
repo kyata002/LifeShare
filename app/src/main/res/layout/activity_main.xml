@@ -96,8 +96,8 @@
 
                 <ImageView
                     android:id="@+id/bt_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_margin="@dimen/_4sdp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_sreach" />
@@ -105,8 +105,8 @@
                 <ImageView
                     android:id="@+id/btn_account"
 
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_accout" />
             </LinearLayout>
@@ -117,7 +117,8 @@
         android:id="@+id/view_page"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/_10sdp"
+        android:background="@color/white"
+        android:padding="@dimen/_12sdp"
         app:layout_constraintBottom_toTopOf="@id/tab_Menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +140,7 @@
         app:tabSelectedTextAppearance="@color/white"
         app:tabSelectedTextColor="#FFF"
         app:tabTextAppearance="@style/MyCustomTextAppearance"
-        app:tabTextColor="#000" />
+        app:tabTextColor="#838181" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,4 +10,8 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
     </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Màu của thanh trạng thái -->
+        <item name="android:statusBarColor">@color/Main</item>
+    </style>
 </resources>

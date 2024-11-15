@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="#921281"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/btn_setting_back"
+                    android:layout_width="@dimen/_21sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:background="@drawable/ic_back"
+                    android:backgroundTint="@color/white"
+                    android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Cài đặt"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_16sdp" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/btn_setting_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:background="@drawable/bg_item_setting"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:background="@drawable/ic_rate" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_15sdp"
+                    android:layout_weight="1"
+                    android:text="Đánh giá ứng dụng "
+                    android:textColor="#000"
+                    android:textSize="@dimen/_14sdp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:background="@drawable/ic_show" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_setting_share"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:background="@drawable/bg_item_setting"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_19sdp"
+                    android:layout_height="@dimen/_22sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_18sdp"
+                    android:background="@drawable/ic_share_setting" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_15sdp"
+                    android:layout_weight="1"
+                    android:text="Chia sẻ ứng dụng "
+                    android:textColor="#000"
+                    android:textSize="@dimen/_14sdp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:background="@drawable/ic_show" />
+
+            </LinearLayout>
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/btn_setting_lang"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:foreground="?attr/selectableItemBackgroundBorderless"-->
+            <!--                android:background="@drawable/botron_btn"-->
+            <!--                android:layout_marginTop="@dimen/_13sdp"-->
+            <!--                android:layout_marginLeft="@dimen/_16sdp"-->
+            <!--                android:layout_marginRight="@dimen/_16sdp"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="0dp">-->
+            <!--                <ImageView-->
+            <!--                    android:layout_width="@dimen/_24sdp"-->
+            <!--                    android:layout_height="@dimen/_24sdp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginLeft="@dimen/_16sdp"-->
+            <!--                    android:background="@drawable/ic_language"/>-->
+            <!--                <TextView-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:text="Language"-->
+            <!--                    android:textColor="#000"-->
+            <!--                    android:textSize="@dimen/_14sdp"-->
+            <!--                    android:layout_marginLeft="@dimen/_12sdp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:fontFamily="@font/lexend_regular"/>-->
+            <!--                <ImageView-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/ic_show"-->
+            <!--                    android:layout_marginRight="@dimen/_16sdp"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"/>-->
+
+            <!--            </LinearLayout>-->
+
+            <LinearLayout
+                android:id="@+id/btn_setting_feed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:background="@drawable/bg_item_setting"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:background="@drawable/ic_feedback" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_11sdp"
+                    android:layout_weight="1"
+                    android:text="Phản hồi ý kiến"
+                    android:textColor="#000"
+                    android:textSize="@dimen/_14sdp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:background="@drawable/ic_show" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_setting_pri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_19sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginRight="@dimen/_16sdp"
+                android:background="@drawable/bg_item_setting"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:background="@drawable/ic_policy" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    android:gravity="center|left"
+                    android:text="Chính sách ứng dụng"
+                    android:textColor="#000"
+                    android:textSize="@dimen/_14sdp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:background="@drawable/ic_show" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
