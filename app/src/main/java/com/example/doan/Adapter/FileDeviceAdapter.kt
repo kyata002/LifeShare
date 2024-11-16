@@ -16,8 +16,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
+import com.example.doan.const.Companion.ACTION_FILE_DELETED
+import com.example.doan.const.Companion.ACTION_FILE_RENAME
 import com.example.doan.model.MenuItemData
 import com.example.doan.ui.dialog.DeleteDialog
+import com.example.doan.ui.dialog.RenameDialog
 import java.io.File
 import java.net.URLConnection
 import java.text.SimpleDateFormat
@@ -84,7 +87,7 @@ class FileDeviceAdapter(private var files: List<File>) :
             listPopupWindow.setOnItemClickListener { _, _, position1, _ ->
                 when (position1) {
                     0 -> shareFile(view.context, file)
-                    1 -> Log.d("FileViewHolder", "Rename file: ${file.name}")
+                    1 -> showRenameDialog(file,position)
                     2 -> showDeleteDialog(file,position)
                     3 -> Log.d("FileViewHolder", "View details of file: ${file.name}")
                 }
@@ -99,6 +102,12 @@ class FileDeviceAdapter(private var files: List<File>) :
             intent.putExtra("FILE_PATH", file.absolutePath)
             intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, DELETE_FILE_REQUEST_CODE)
+        }
+        private fun showRenameDialog(file: File, position: Int) {
+            val intent = Intent(context, RenameDialog::class.java)
+            intent.putExtra("FILE_PATH", file.absolutePath)
+            intent.putExtra("FILE_POSITION", position)
+            (context as AppCompatActivity).startActivityForResult(intent, RENAME_FILE_REQUEST_CODE)
         }
 
 
@@ -135,7 +144,9 @@ class FileDeviceAdapter(private var files: List<File>) :
         }
     }
 
+
     companion object {
         const val DELETE_FILE_REQUEST_CODE = 1
+        const val RENAME_FILE_REQUEST_CODE = 2
     }
 }

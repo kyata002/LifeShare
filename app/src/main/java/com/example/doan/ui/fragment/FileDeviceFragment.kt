@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.Adapter.FileDeviceAdapter
 import com.example.doan.R
 import com.example.doan.const.Companion.ACTION_FILE_DELETED
+import com.example.doan.const.Companion.ACTION_FILE_RENAME
 import com.example.doan.viewmodel.SplashViewModel
 import java.io.File
 
@@ -33,13 +34,30 @@ class FileDeviceFragment : Fragment() {
     // Define BroadcastReceiver as a member variable
     private val fileDeletedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-
             if (intent?.action == ACTION_FILE_DELETED) {
                 val position = intent.getIntExtra("FILE_POSITION", -1)
                 if (position != -1 && position < fileList.size) {
                     fileList.removeAt(position)
                     fileAdapter.updateFiles(fileList)
-//                    recyclerView.adapter = fileAdapter
+                }
+            }
+        }
+    }
+
+    private val fileRenamedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_FILE_RENAME) {
+                val position = intent.getIntExtra("FILE_POSITION", -1)
+                val newFileName = intent.getStringExtra("NEW_FILE_NAME")
+
+                if (position != -1 && newFileName != null) {
+                    val file = fileList.getOrNull(position)
+                    file?.let {
+                        // Update the file name
+                        val renamedFile = File(it.parent, newFileName)
+                        fileList[position] = renamedFile // Update the list with the new file
+                        fileAdapter.updateFiles(fileList) // Notify adapter to update RecyclerView
+                    }
                 }
             }
         }
@@ -78,14 +96,17 @@ class FileDeviceFragment : Fragment() {
     // Register BroadcastReceiver in onStart
     override fun onStart() {
         super.onStart()
+        // Register fileDeletedReceiver for file deletion
         requireContext().registerReceiver(fileDeletedReceiver, IntentFilter(ACTION_FILE_DELETED))
+
+        // Register fileRenamedReceiver for file renaming
+        requireContext().registerReceiver(fileRenamedReceiver, IntentFilter(ACTION_FILE_RENAME))
     }
 
     override fun onStop() {
         super.onStop()
+        // Unregister receivers to avoid memory leaks
         requireContext().unregisterReceiver(fileDeletedReceiver)
+        requireContext().unregisterReceiver(fileRenamedReceiver)
     }
-
 }
-
-
