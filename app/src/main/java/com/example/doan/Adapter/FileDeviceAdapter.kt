@@ -1,5 +1,6 @@
 package com.example.doan.Adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -22,6 +23,7 @@ import java.net.URLConnection
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@Suppress("DEPRECATION")
 class FileDeviceAdapter(private var files: List<File>) :
     RecyclerView.Adapter<FileDeviceAdapter.FileViewHolder>() {
 
@@ -39,6 +41,7 @@ class FileDeviceAdapter(private var files: List<File>) :
     override fun getItemCount() = files.size
 
     // Method to update the list of files
+    @SuppressLint("NotifyDataSetChanged")
     fun updateFiles(newFiles: List<File>) {
         files = newFiles
         notifyDataSetChanged()  // Use DiffUtil for better performance in production
@@ -78,11 +81,11 @@ class FileDeviceAdapter(private var files: List<File>) :
             listPopupWindow.width = 300
             listPopupWindow.isModal = true
 
-            listPopupWindow.setOnItemClickListener { _, _, position, _ ->
-                when (position) {
+            listPopupWindow.setOnItemClickListener { _, _, position1, _ ->
+                when (position1) {
                     0 -> shareFile(view.context, file)
                     1 -> Log.d("FileViewHolder", "Rename file: ${file.name}")
-                    2 -> showDeleteDialog(file)
+                    2 -> showDeleteDialog(file,position)
                     3 -> Log.d("FileViewHolder", "View details of file: ${file.name}")
                 }
                 listPopupWindow.dismiss()
@@ -91,11 +94,13 @@ class FileDeviceAdapter(private var files: List<File>) :
             listPopupWindow.show()
         }
 
-        private fun showDeleteDialog(file: File) {
+        private fun showDeleteDialog(file: File, position: Int) {
             val intent = Intent(context, DeleteDialog::class.java)
             intent.putExtra("FILE_PATH", file.absolutePath)
+            intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, DELETE_FILE_REQUEST_CODE)
         }
+
 
         private fun shareFile(context: Context, file: File) {
             try {
