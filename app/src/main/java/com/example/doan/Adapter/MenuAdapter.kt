@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.doan.R
-import com.example.doan.model.MenuItemData
+import com.example.doan.data.model.MenuItemData
 
 class MenuAdapter(context: Context, private val items: List<MenuItemData>) :
     ArrayAdapter<MenuItemData>(context, R.layout.custom_menu_item, items) {

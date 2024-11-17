@@ -88,7 +88,7 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/favorite_checked"
+            android:id="@+id/btn_upload"
             android:layout_width="@dimen/_26sdp"
             android:layout_height="@dimen/_44sdp"
             android:layout_gravity="center"

@@ -1,5 +1,6 @@
 package com.example.doan.view.viewmodel
 
+import FileApp
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
@@ -18,8 +19,8 @@ import java.io.File
 
 class SplashViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _files = MutableLiveData<List<File>>()
-    val files: LiveData<List<File>> get() = _files
+    private val _files = MutableLiveData<List<FileApp>>()
+    val files: LiveData<List<FileApp>> get() = _files
 
     private val _navigateTo = MutableLiveData<Class<*>>()
     val navigateTo: LiveData<Class<*>> = _navigateTo
@@ -85,11 +86,21 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
 
     // Method to get files of multiple types
     fun getFileList() {
-        val types = listOf("xlsx", "pdf", "mp4","mp3","txt","jpg") // Add more file types as needed
-        val allFiles = mutableListOf<File>()
+        val types = listOf("xlsx", "pdf", "mp4", "mp3", "txt", "jpg") // Add more file types as needed
+        val allFiles = mutableListOf<FileApp>()
+
         types.forEach { type ->
             val filesOfType = loadFilesOfType(getApplication<Application>().applicationContext, type)
-            allFiles.addAll(filesOfType)
+            val fileApps = filesOfType.map { file ->
+                FileApp(
+                    name = file.name,
+                    size = file.length(),
+                    type = type,
+                    path = file.absolutePath,
+                    lastModified = file.lastModified()
+                )
+            }
+            allFiles.addAll(fileApps)
         }
         _files.postValue(allFiles)
     }

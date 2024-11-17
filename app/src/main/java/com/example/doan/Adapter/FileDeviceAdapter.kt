@@ -16,17 +16,19 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
-import com.example.doan.model.MenuItemData
+import com.example.doan.data.model.MenuItemData
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import java.io.File
 import java.net.URLConnection
 import java.text.SimpleDateFormat
 import java.util.Date
 
 @Suppress("DEPRECATION")
-class FileDeviceAdapter(private var files: List<File>) :
+class FileDeviceAdapter(private var files: List<FileApp>) :
     RecyclerView.Adapter<FileDeviceAdapter.FileViewHolder>() {
 
     lateinit var context: Context
@@ -44,7 +46,7 @@ class FileDeviceAdapter(private var files: List<File>) :
 
     // Method to update the list of files
     @SuppressLint("NotifyDataSetChanged")
-    fun updateFiles(newFiles: List<File>) {
+    fun updateFiles(newFiles: List<FileApp>) {
         files = newFiles
         notifyDataSetChanged()  // Use DiffUtil for better performance in production
     }
@@ -56,20 +58,27 @@ class FileDeviceAdapter(private var files: List<File>) :
         private val sizeFile: TextView = itemView.findViewById(R.id.size_file)
         private val imgViewFile: ImageView = itemView.findViewById(R.id.img_view_file)
         private val btnMore: ImageView = itemView.findViewById(R.id.more_options)
+        private val btnUpload: ImageView = itemView.findViewById(R.id.btn_upload)
 
-        fun bind(file: File) {
-            imgViewFile.setImageResource(getIconResource(file.extension))
+        // Updated to take `FileApp` instead of `File`
+        fun bind(file: FileApp) {
+            imgViewFile.setImageResource(getIconResource(file.type))
             tvName.text = file.name
-            tvType.text = "Loại: ${file.extension}"
-            sizeFile.text = getSizeText(file)
-            dateFile.text = "Thời gian: ${formatDate(file)}"
+            tvType.text = "Loại: ${file.type}"
+            sizeFile.text = getSizeText(file.size)
+            dateFile.text = "Thời gian: ${formatDate(file.lastModified)}"
 
             // Show more options menu
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
+            btnUpload.setOnClickListener {
+                val database = Firebase.database
+                val myRef = database.getReference("message")
 
+                myRef.setValue("Hello, World!")
+            }
         }
 
-        private fun showCustomPopupMenu(view: View, file: File) {
+        private fun showCustomPopupMenu(view: View, file: FileApp) {
             val listPopupWindow = ListPopupWindow(view.context)
             val menuItems = listOf(
                 MenuItemData(R.drawable.ic_share, "Chia sẻ"),
@@ -87,15 +96,16 @@ class FileDeviceAdapter(private var files: List<File>) :
             listPopupWindow.setOnItemClickListener { _, _, position1, _ ->
                 when (position1) {
                     0 -> shareFile(view.context, file)
-                    1 -> showRenameDialog(file,position)
-                    2 -> showDeleteDialog(file,position)
-                    3 -> showDetailDialog(FileApp(file.name,file.length(),file.extension,file.path,file.lastModified()))
+                    1 -> showRenameDialog(file, adapterPosition)
+                    2 -> showDeleteDialog(file, adapterPosition)
+                    3 -> showDetailDialog(file)
                 }
                 listPopupWindow.dismiss()
             }
 
             listPopupWindow.show()
         }
+
         private fun showDetailDialog(file: FileApp) {
             val intent = Intent(context, DetailDialog::class.java).apply {
                 putExtra("FILE_DETAILS", file)
@@ -103,29 +113,27 @@ class FileDeviceAdapter(private var files: List<File>) :
             (context as AppCompatActivity).startActivity(intent)
         }
 
-
-        private fun showDeleteDialog(file: File, position: Int) {
+        private fun showDeleteDialog(file: FileApp, position: Int) {
             val intent = Intent(context, DeleteDialog::class.java)
-            intent.putExtra("FILE_PATH", file.absolutePath)
+            intent.putExtra("FILE_PATH", file.path)
             intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, DELETE_FILE_REQUEST_CODE)
         }
 
-        private fun showRenameDialog(file: File, position: Int) {
+        private fun showRenameDialog(file: FileApp, position: Int) {
             val intent = Intent(context, RenameDialog::class.java)
-            intent.putExtra("FILE_PATH", file.absolutePath)
+            intent.putExtra("FILE_PATH", file.path)
             intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, RENAME_FILE_REQUEST_CODE)
         }
 
-
-        private fun shareFile(context: Context, file: File) {
+        private fun shareFile(context: Context, file: FileApp) {
             try {
                 val builder = VmPolicy.Builder()
                 StrictMode.setVmPolicy(builder.build())
                 val intentShareFile = Intent(Intent.ACTION_SEND)
                 intentShareFile.type = URLConnection.guessContentTypeFromName(file.name)
-                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
+                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(file.path)))
                 context.startActivity(Intent.createChooser(intentShareFile, "Chia sẻ tệp"))
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -142,16 +150,15 @@ class FileDeviceAdapter(private var files: List<File>) :
             else -> R.drawable.ic_unknown
         }
 
-        private fun formatDate(file: File): String {
-            return SimpleDateFormat("dd/MM/yyyy").format(Date(file.lastModified()))
+        private fun formatDate(lastModified: Long): String {
+            return SimpleDateFormat("dd/MM/yyyy").format(Date(lastModified))
         }
 
-        private fun getSizeText(file: File): String {
-            val sizeKB = file.length() / 1024.0
+        private fun getSizeText(size: Long): String {
+            val sizeKB = size / 1024.0
             return "Kích thước: ${if (sizeKB >= 1024) "%.2fMB".format(sizeKB / 1024) else "%.2fKB".format(sizeKB)}"
         }
     }
-
 
     companion object {
         const val DELETE_FILE_REQUEST_CODE = 1

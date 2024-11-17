@@ -1,5 +1,6 @@
 package com.example.doan.view.ui.fragment
 
+import FileApp
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,7 +27,7 @@ class FileDeviceFragment : Fragment() {
     private lateinit var fileAdapter: FileDeviceAdapter
 
     // A list to hold the files that are currently in the ViewModel
-    private var fileList = mutableListOf<File>()
+    private var fileList = mutableListOf<FileApp>()
 
     // Define BroadcastReceiver as a member variable
     private val fileDeletedReceiver = object : BroadcastReceiver() {
@@ -48,12 +49,24 @@ class FileDeviceFragment : Fragment() {
                 val newFileName = intent.getStringExtra("NEW_FILE_NAME")
 
                 if (position != -1 && newFileName != null) {
-                    val file = fileList.getOrNull(position)
-                    file?.let {
-                        // Update the file name
-                        val renamedFile = File(it.parent, newFileName)
-                        fileList[position] = renamedFile // Update the list with the new file
-                        fileAdapter.updateFiles(fileList) // Notify adapter to update RecyclerView
+                    val oldFileApp = fileList.getOrNull(position)
+                    oldFileApp?.let {
+                        // Create a new File with the updated name
+                        val newFile = File(it.path).parentFile?.let { parent ->
+                            File(parent, newFileName)
+                        }
+
+                        // If the renamed file was successfully created, update fileList
+                        newFile?.let { updatedFile ->
+                            fileList[position] = FileApp(
+                                name = updatedFile.name,
+                                size = updatedFile.length(),
+                                type = updatedFile.extension,
+                                path = updatedFile.absolutePath,
+                                lastModified = updatedFile.lastModified()
+                            )
+                            fileAdapter.updateFiles(fileList) // Notify adapter to update RecyclerView
+                        }
                     }
                 }
             }
