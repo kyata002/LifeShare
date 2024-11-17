@@ -4,9 +4,9 @@ package com.example.doan.Adapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.doan.ui.fragment.FileCommunityFragment
-import com.example.doan.ui.fragment.FileDeviceFragment
-import com.example.doan.ui.fragment.FileShareFragment
+import com.example.doan.view.ui.fragment.FileCommunityFragment
+import com.example.doan.view.ui.fragment.FileDeviceFragment
+import com.example.doan.view.ui.fragment.FileShareFragment
 
 class MainPagerAdapter(
     activity: AppCompatActivity,

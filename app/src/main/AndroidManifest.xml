@@ -25,33 +25,37 @@
         android:theme="@style/Theme.Doan"
         tools:targetApi="31">
         <activity
-            android:name=".ui.dialog.RenameDialog"
-            android:theme="@style/Transparent"
-            android:exported="false" />
-        <activity
-            android:name=".ui.dialog.DeleteDialog"
+            android:name=".view.ui.dialog.DetailDialog"
             android:exported="false"
             android:theme="@style/Transparent" />
         <activity
-            android:name=".ui.activity.SettingActivity"
+            android:name=".view.ui.dialog.RenameDialog"
+            android:exported="false"
+            android:theme="@style/Transparent" />
+        <activity
+            android:name=".view.ui.dialog.DeleteDialog"
+            android:exported="false"
+            android:theme="@style/Transparent" />
+        <activity
+            android:name=".view.ui.activity.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.ProfileActivity"
+            android:name=".view.ui.activity.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.RegisterActivity"
+            android:name=".view.ui.activity.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dialog.PermissionRequestDialog"
+            android:name=".view.ui.dialog.PermissionRequestDialog"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name=".view.ui.activity.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".view.ui.activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.SplashActivity"
+            android:name=".view.ui.activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

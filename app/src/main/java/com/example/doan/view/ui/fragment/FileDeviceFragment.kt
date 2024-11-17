@@ -1,17 +1,14 @@
-package com.example.doan.ui.fragment
+package com.example.doan.view.ui.fragment
 
-import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +17,7 @@ import com.example.doan.Adapter.FileDeviceAdapter
 import com.example.doan.R
 import com.example.doan.const.Companion.ACTION_FILE_DELETED
 import com.example.doan.const.Companion.ACTION_FILE_RENAME
-import com.example.doan.viewmodel.SplashViewModel
+import com.example.doan.view.viewmodel.SplashViewModel
 import java.io.File
 
 class FileDeviceFragment : Fragment() {

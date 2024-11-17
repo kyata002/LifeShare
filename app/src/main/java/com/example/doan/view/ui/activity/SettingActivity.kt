@@ -1,4 +1,4 @@
-package com.example.doan.ui.activity
+package com.example.doan.view.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,16 +6,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.VmPolicy
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.R
 import com.example.doan.databinding.ActivitySettingBinding
-import java.io.File
-import java.net.URLConnection
 
 @Suppress("DEPRECATION")
 class SettingActivity : AppCompatActivity() {

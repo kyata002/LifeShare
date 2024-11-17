@@ -1,8 +1,7 @@
-package com.example.doan.ui.dialog
+package com.example.doan.view.ui.dialog
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.example.doan.const.Companion.ACTION_FILE_DELETED

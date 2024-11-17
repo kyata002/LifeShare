@@ -1,5 +1,5 @@
 // ViewModelMain.kt
-package com.example.doan.viewmodel
+package com.example.doan.view.viewmodel
 
 import androidx.lifecycle.ViewModel
 

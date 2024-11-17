@@ -1,4 +1,4 @@
-package com.example.doan.ui.activity
+package com.example.doan.view.ui.activity
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.example.doan.Adapter.MainPagerAdapter
 import com.example.doan.R
 import com.example.doan.databinding.ActivityMainBinding
-import com.example.doan.viewmodel.ViewModelMain
+import com.example.doan.view.viewmodel.ViewModelMain
 import com.google.android.material.tabs.TabLayoutMediator
 import android.widget.Toast
 import androidx.core.view.WindowInsetsControllerCompat

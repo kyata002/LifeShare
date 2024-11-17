@@ -1,12 +1,12 @@
 package com.example.doan.Adapter
 
+import FileApp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +16,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
-import com.example.doan.const.Companion.ACTION_FILE_DELETED
-import com.example.doan.const.Companion.ACTION_FILE_RENAME
 import com.example.doan.model.MenuItemData
-import com.example.doan.ui.dialog.DeleteDialog
-import com.example.doan.ui.dialog.RenameDialog
+import com.example.doan.view.ui.dialog.DeleteDialog
+import com.example.doan.view.ui.dialog.DetailDialog
+import com.example.doan.view.ui.dialog.RenameDialog
 import java.io.File
 import java.net.URLConnection
 import java.text.SimpleDateFormat
@@ -67,6 +66,7 @@ class FileDeviceAdapter(private var files: List<File>) :
 
             // Show more options menu
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
+
         }
 
         private fun showCustomPopupMenu(view: View, file: File) {
@@ -89,13 +89,20 @@ class FileDeviceAdapter(private var files: List<File>) :
                     0 -> shareFile(view.context, file)
                     1 -> showRenameDialog(file,position)
                     2 -> showDeleteDialog(file,position)
-                    3 -> Log.d("FileViewHolder", "View details of file: ${file.name}")
+                    3 -> showDetailDialog(FileApp(file.name,file.length(),file.extension,file.path,file.lastModified()))
                 }
                 listPopupWindow.dismiss()
             }
 
             listPopupWindow.show()
         }
+        private fun showDetailDialog(file: FileApp) {
+            val intent = Intent(context, DetailDialog::class.java).apply {
+                putExtra("FILE_DETAILS", file)
+            }
+            (context as AppCompatActivity).startActivity(intent)
+        }
+
 
         private fun showDeleteDialog(file: File, position: Int) {
             val intent = Intent(context, DeleteDialog::class.java)
@@ -103,6 +110,7 @@ class FileDeviceAdapter(private var files: List<File>) :
             intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, DELETE_FILE_REQUEST_CODE)
         }
+
         private fun showRenameDialog(file: File, position: Int) {
             val intent = Intent(context, RenameDialog::class.java)
             intent.putExtra("FILE_PATH", file.absolutePath)

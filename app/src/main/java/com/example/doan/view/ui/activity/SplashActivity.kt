@@ -1,11 +1,9 @@
-package com.example.doan.ui.activity
+package com.example.doan.view.ui.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -14,7 +12,7 @@ import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
 import com.example.doan.R
 import com.example.doan.databinding.ActivitySplashBinding
-import com.example.doan.viewmodel.SplashViewModel
+import com.example.doan.view.viewmodel.SplashViewModel
 
 @Suppress("DEPRECATION")
 class SplashActivity : AppCompatActivity() {

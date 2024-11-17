@@ -1,4 +1,4 @@
-package com.example.doan.viewmodel
+package com.example.doan.view.viewmodel
 
 import android.app.Application
 import android.content.Context
@@ -11,9 +11,9 @@ import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.doan.ui.activity.MainActivity
-import com.example.doan.ui.activity.SplashActivity
-import com.example.doan.ui.dialog.PermissionRequestDialog
+import com.example.doan.view.ui.activity.MainActivity
+import com.example.doan.view.ui.activity.SplashActivity
+import com.example.doan.view.ui.dialog.PermissionRequestDialog
 import java.io.File
 
 class SplashViewModel(application: Application) : AndroidViewModel(application) {

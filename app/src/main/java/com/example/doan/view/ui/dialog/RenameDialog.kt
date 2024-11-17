@@ -1,4 +1,4 @@
-package com.example.doan.ui.dialog
+package com.example.doan.view.ui.dialog
 
 import android.content.Intent
 import android.net.Uri

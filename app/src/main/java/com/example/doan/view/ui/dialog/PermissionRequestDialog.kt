@@ -1,4 +1,4 @@
-package com.example.doan.ui.dialog
+package com.example.doan.view.ui.dialog
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.doan.databinding.DialogPermissionrequestBinding
-import com.example.doan.ui.activity.MainActivity
+import com.example.doan.view.ui.activity.MainActivity
 
 class PermissionRequestDialog : AppCompatActivity() {
     private lateinit var binding: DialogPermissionrequestBinding

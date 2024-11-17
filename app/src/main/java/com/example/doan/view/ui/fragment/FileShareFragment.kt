@@ -1,4 +1,4 @@
-package com.example.doan.ui.fragment
+package com.example.doan.view.ui.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.doan.R
 
-
-class FileCommunityFragment : Fragment() {
+class FileShareFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +19,7 @@ class FileCommunityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_file_community, container, false)
+        return inflater.inflate(R.layout.fragment_file_share, container, false)
     }
 
     companion object {

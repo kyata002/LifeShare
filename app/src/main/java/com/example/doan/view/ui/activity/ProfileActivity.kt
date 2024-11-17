@@ -1,10 +1,8 @@
-package com.example.doan.ui.activity
+package com.example.doan.view.ui.activity
 
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.view.InputDevice
-import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -13,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.R
 import com.example.doan.databinding.ActivityProfileBinding
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 @Suppress("DEPRECATION")
 class ProfileActivity : AppCompatActivity() {
