@@ -18,14 +18,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-
 @Suppress("DEPRECATION")
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     private var mDatabase: DatabaseReference? = null
     private val context: Context = this
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +66,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(email: String, password: String, username: String, phoneNumber: String) {
-        // Show progress bar (Optional: Uncomment if using a progress bar)
-        // progressBar.visibility = View.VISIBLE
-
         // Create user with email and password
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -109,52 +104,14 @@ class RegisterActivity : AppCompatActivity() {
                             // Handle failure in data saving
                             Toast.makeText(context, "Failed to save user data", Toast.LENGTH_SHORT).show()
                         }
-//                    navigateToActivity(LoginActivity::class.java)
-
-
                 } else {
                     // User registration failed
                     if (task.exception is FirebaseAuthUserCollisionException) {
-                        Toast.makeText(context, "Email is already registered", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Email đã được đăng ký", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Đăng ký thất bại: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                // Hide progress bar (Optional)
-                // progressBar.visibility = View.GONE
-            }
-    }
-
-
-
-    private fun saveUserDataToDatabase(userId: String, accountModel: AccountModel) {
-        // Get reference to user node in Realtime Database
-        val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
-
-        // Create a map containing user data
-        val userMap = HashMap<String, Any>()
-        userMap["username"] = accountModel.username
-        userMap["email"] = accountModel.email
-        userMap["phoneNumber"] = accountModel.numberphone
-
-        // Consider excluding password for security reasons
-
-        // Set the data at the user node
-        userRef.setValue(userMap)
-            .addOnSuccessListener { // Data saved successfully
-                Toast.makeText(
-                    this@RegisterActivity,
-                    "Đăng ký thành công!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            .addOnFailureListener { e -> // Error while saving data
-                Toast.makeText(
-                    this@RegisterActivity,
-                    "Lỗi khi lưu thông tin: " + e.message,
-                    Toast.LENGTH_SHORT
-                ).show()
             }
     }
 

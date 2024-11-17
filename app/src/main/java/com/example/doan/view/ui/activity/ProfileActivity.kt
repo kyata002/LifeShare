@@ -13,32 +13,32 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.R
 import com.example.doan.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 @Suppress("DEPRECATION")
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Inflate the layout using ViewBinding
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth and Firestore
+        // Initialize Firebase Auth and Database reference
         auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        database = FirebaseDatabase.getInstance().reference
 
         setupStatusBar()
 
+        // Configure edit icons and input handling
         val editIcons = listOf(binding.ivEditUsername, binding.ivEditEmail, binding.ivEditPhoneNumber)
         val textViews = listOf(binding.tvUsername, binding.tvEmail, binding.tvPhoneNumber)
         val editTexts = listOf(binding.etUsername, binding.etEmail, binding.etPhoneNumber)
 
-        // When edit icon is clicked, show EditText and save/cancel buttons
+        // Show EditText and save/cancel buttons on edit icon click
         editIcons.forEachIndexed { index, imageView ->
             imageView.setOnClickListener {
                 textViews[index].visibility = View.GONE
@@ -49,6 +49,9 @@ class ProfileActivity : AppCompatActivity() {
 
         // Save button
         binding.btnSave.setOnClickListener {
+            saveUserProfile() // Call the new method to save data
+
+            // Update UI to show TextViews and hide EditTexts
             textViews.forEachIndexed { index, textView ->
                 textView.text = editTexts[index].text.toString()
                 textView.visibility = View.VISIBLE
@@ -59,30 +62,12 @@ class ProfileActivity : AppCompatActivity() {
 
         // Cancel button
         binding.btnCancel.setOnClickListener {
-            textViews.forEachIndexed { index, textView ->
-                editTexts[index].visibility = View.GONE
-                textView.visibility = View.VISIBLE
-            }
-            binding.btnContainer.visibility = View.GONE
+            hideEditableFields()
         }
 
-        // Listener to detect taps outside the EditTexts
+        // Hide EditText fields when tapping outside them
         binding.root.setOnClickListener {
-            // Hide EditText fields and show TextViews
-            textViews.forEach { textView ->
-                textView.visibility = View.VISIBLE
-            }
-            editTexts.forEachIndexed { index, editText ->
-                editText.visibility = View.GONE
-                // Reset value of EditText from TextView
-                editText.setText(textViews[index].text)
-            }
-            binding.btnContainer.visibility = View.GONE
-
-            // Hide the keyboard if focus is not on EditText
-            if (currentFocus !is EditText) {
-                hideKeyboard()
-            }
+            hideEditableFields()
         }
 
         // Navigate back
@@ -91,35 +76,33 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         // Prevent hiding inputs when tapping inside EditText fields
-        listOf(binding.etUsername, binding.etEmail, binding.etPhoneNumber).forEach { editText ->
+        editTexts.forEach { editText ->
             editText.setOnClickListener {
                 // Prevent root click from triggering hide behavior
             }
         }
 
-        // Fetch user profile data from Firebase Firestore
+        // Fetch user profile data from Firebase Realtime Database
         fetchUserProfile()
     }
 
     private fun fetchUserProfile() {
         val user = auth.currentUser
         if (user != null) {
-            // Fetch user profile data from Firestore
             val userId = user.uid
-            firestore.collection("users").document(userId).get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        // Populate the UI with the user data
-                        val username = document.getString("username") ?: ""
-                        val email = document.getString("email") ?: user.email ?: ""
-                        val phoneNumber = document.getString("phoneNumber") ?: ""
+            database.child("users").child(userId).get()
+                .addOnSuccessListener { dataSnapshot ->
+                    if (dataSnapshot.exists()) {
+                        // Retrieve user data
+                        val username = dataSnapshot.child("name").getValue(String::class.java) ?: "No username"
+                        val email = dataSnapshot.child("email").getValue(String::class.java) ?: user.email ?: "No email"
+                        val phoneNumber = dataSnapshot.child("phone").getValue(String::class.java) ?: "No phone number"
 
-                        // Set the data to text views
+                        // Set the data to TextViews and EditTexts
                         binding.tvUsername.text = username
                         binding.tvEmail.text = email
                         binding.tvPhoneNumber.text = phoneNumber
 
-                        // Set the values to EditText fields as well (for editing)
                         binding.etUsername.setText(username)
                         binding.etEmail.setText(email)
                         binding.etPhoneNumber.setText(phoneNumber)
@@ -130,6 +113,52 @@ class ProfileActivity : AppCompatActivity() {
                 .addOnFailureListener { exception ->
                     Toast.makeText(this, "Error fetching profile: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+    }
+
+    private fun saveUserProfile() {
+        val user = auth.currentUser
+        if (user != null) {
+            val userId = user.uid
+
+            // Collect data from EditTexts
+            val updatedUsername = binding.etUsername.text.toString()
+            val updatedEmail = binding.etEmail.text.toString()
+            val updatedPhoneNumber = binding.etPhoneNumber.text.toString()
+
+            // Create a map of updated data
+            val updates = mapOf(
+                "name" to updatedUsername,
+                "email" to updatedEmail,
+                "phone" to updatedPhoneNumber
+            )
+
+            // Update the database
+            database.child("users").child(userId).updateChildren(updates)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Failed to update profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun hideEditableFields() {
+        val editTexts = listOf(binding.etUsername, binding.etEmail, binding.etPhoneNumber)
+        val textViews = listOf(binding.tvUsername, binding.tvEmail, binding.tvPhoneNumber)
+
+        // Hide EditText fields and show TextViews
+        textViews.forEach { it.visibility = View.VISIBLE }
+        editTexts.forEachIndexed { index, editText ->
+            editText.visibility = View.GONE
+            editText.setText(textViews[index].text) // Reset value
+        }
+        binding.btnContainer.visibility = View.GONE
+
+        // Hide keyboard if focus is not on EditText
+        if (currentFocus !is EditText) {
+            hideKeyboard()
         }
     }
 
