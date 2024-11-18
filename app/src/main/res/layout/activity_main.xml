@@ -15,46 +15,6 @@
         android:background="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:id="@+id/lc_Search"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_28sdp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:background="@drawable/bg_search"
-            android:orientation="horizontal"
-            android:padding="@dimen/_4sdp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/bt_BackS"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_back" />
-
-            <EditText
-                android:id="@+id/de_search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="Search..."
-                android:maxLines="1"
-                android:textColor="#000"
-                android:textColorHint="#CC9F9D9D"
-                android:textSize="@dimen/_12sdp" />
-
-            <ImageView
-                android:id="@+id/bt_clears"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_clear_search" />
-
-        </LinearLayout>
-
         <LinearLayout
             android:id="@+id/lc_Main"
             android:layout_width="match_parent"
@@ -113,12 +73,14 @@
         </LinearLayout>
     </FrameLayout>
 
+
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_page"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white"
-        android:padding="@dimen/_12sdp"
+        android:paddingHorizontal="@dimen/_12sdp"
         app:layout_constraintBottom_toTopOf="@id/tab_Menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/a_to_z" android:title="Sắp xếp A - Z"/>
+        <item android:id="@+id/z_to_a" android:title="Sắp xếp Z - A"/>
+        <item android:id="@+id/by_size" android:title="Sắp xếp dung lượng"/>
+        <item android:id="@+id/by_date" android:title="Sắp xếp thời gian"/>
+    </group>
+</menu>

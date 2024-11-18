@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.ListPopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
@@ -88,118 +89,105 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 val fileUri = Uri.fromFile(File(file.path))
                 val fileRef = storageRef.child("uploads/${file.name}")
 
-                // Inflate the custom layout
+                // Inflate the custom layout for the progress dialog
                 val dialogView =
                     LayoutInflater.from(context).inflate(R.layout.dialog_upload_status, null)
                 val dialogIcon: ImageView = dialogView.findViewById(R.id.dialog_icon)
                 val dialogMessage: TextView = dialogView.findViewById(R.id.dialog_message)
 
-                // Configure the dialog content and appearance
+                // Configure the dialog content
                 dialogMessage.text = "Tài liệu đang tải lên..."
-                dialogMessage.gravity = Gravity.CENTER  // Center align the text if needed
-                dialogIcon.setImageResource(R.drawable.ic_upload_filde)  // Initial uploading icon
+                dialogIcon.setImageResource(R.drawable.ic_upload_filde)  // Uploading icon
 
-                // Create the AlertDialog and set the custom view
+                // Create and show the progress dialog
                 val progressDialog = androidx.appcompat.app.AlertDialog.Builder(context)
                     .setView(dialogView)
                     .setCancelable(false)
                     .create()
-
-                // Set transparent background for rounded corners to show
                 progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-                // Show the dialog
                 progressDialog.show()
 
-                // Check if file exists in Firebase Storage
-                fileRef.putFile(fileUri)
-                    .addOnSuccessListener {
-                        dialogMessage.text = "Tải tài liệu lên thành công!"
-                        dialogIcon.setImageResource(R.drawable.ic_success)  // Success icon
+                // Check if the file already exists in Firebase Storage
+                fileRef.metadata.addOnSuccessListener {
+                    // File exists, handle accordingly
+                    dialogMessage.text = "Tài liệu đã tồn tại. Dừng tải lên."
+                    dialogIcon.setImageResource(R.drawable.ic_warning)  // Warning icon
+                    progressDialog.dismissAfterDelay(1500)
+                }.addOnFailureListener {
+                    // File doesn't exist, proceed to upload
+                    fileRef.putFile(fileUri)
+                        .addOnSuccessListener {
+                            dialogMessage.text = "Tải tài liệu lên thành công!"
+                            dialogIcon.setImageResource(R.drawable.ic_success)  // Success icon
 
-                        // Get the download URL after upload
-                        fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                            fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                                if (userId != null) {
+                                    val userRef = FirebaseDatabase.getInstance().getReference("users")
+                                        .child(userId)
 
-                            // Get the next sequential ID for the file
-                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-                            if (userId != null) {
-                                val userRef = FirebaseDatabase.getInstance().getReference("users")
-                                    .child(userId)
+                                    userRef.child("listAppUp").addListenerForSingleValueEvent(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            val currentFiles = snapshot.children.toList()
+                                            val nextId = currentFiles.size + 1  // Increment for the next file ID
 
-                                // Fetch the current list of files to get the next ID
-                                userRef.child("listAppUp").addListenerForSingleValueEvent(object :
-                                    ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        // Get the last file ID or count
-                                        val currentFiles = snapshot.children.toList()
-                                        val nextId =
-                                            currentFiles.size + 1  // Increment for the next file ID
+                                            val uploadedFile = FileCloud(
+                                                name = file.name,
+                                                path = file.path,
+                                                type = file.type,
+                                                size = file.size,
+                                                lastModified = file.lastModified,
+                                                downloadUrl = downloadUri.toString(),
+                                                fileId = nextId
+                                            )
 
-                                        // Create the FileApp object with the file details
-                                        val uploadedFile = FileCloud(
-                                            name = file.name,
-                                            path = file.path,
-                                            type = file.type,
-                                            size = file.size,
-                                            lastModified = file.lastModified,
-                                            downloadUrl = downloadUri.toString(),  // Add the download URL here
-                                            fileId = nextId  // Include the sequential ID
-                                        )
+                                            userRef.child("listAppUp").child(nextId.toString())
+                                                .setValue(uploadedFile)
+                                                .addOnSuccessListener {
+                                                    progressDialog.dismissAfterDelay(1500)
+//                                                    Toast.makeText(context, "File added to listAppUp!", Toast.LENGTH_SHORT).show()
+                                                }
+                                                .addOnFailureListener {
+                                                    progressDialog.dismissAfterDelay(1500)
+//                                                    Toast.makeText(context, "Failed to update listAppUp.", Toast.LENGTH_SHORT).show()
+                                                }
+                                        }
 
-                                        // Push the uploaded file to the listAppUp with the new ID
-                                        userRef.child("listAppUp").child(nextId.toString())
-                                            .setValue(uploadedFile)
-                                            .addOnSuccessListener {
-                                                progressDialog.dismissAfterDelay(1500)
-                                                Toast.makeText(
-                                                    context,
-                                                    "File added to listAppUp!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            .addOnFailureListener {
-                                                progressDialog.dismissAfterDelay(1500)
-                                                Toast.makeText(
-                                                    context,
-                                                    "Failed to update listAppUp.",
-                                                    Toast.LENGTH_SHORT).show()
-                                            }
-                                    }
-
-                                    override fun onCancelled(error: DatabaseError) {
-                                        progressDialog.dismissAfterDelay(1500)
-                                        Toast.makeText(
-                                            context,
-                                            "Error fetching data",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
+                                        override fun onCancelled(error: DatabaseError) {
+                                            progressDialog.dismissAfterDelay(1500)
+//                                            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
+                                        }
+                                    })
+                                }
+                            }.addOnFailureListener { downloadException ->
+                                dialogMessage.text = "Lỗi lấy link tải: ${downloadException.message}"
+                                dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
+                                progressDialog.dismissAfterDelay(1500)
                             }
-                        }.addOnFailureListener { downloadException ->
-                            // Handle failure to get the download URL
-                            dialogMessage.text = "Lỗi lấy link tải: ${downloadException.message}"
+                        }
+                        .addOnFailureListener { uploadException ->
+                            dialogMessage.text = "Tải lên thất bại: ${uploadException.message}"
                             dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
                             progressDialog.dismissAfterDelay(1500)
                         }
-                    }
-                    .addOnFailureListener { uploadException ->
-                        dialogMessage.text = "Tải lên thất bại: ${uploadException.message}"
-                        dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
-                        progressDialog.dismissAfterDelay(1500)
-                    }
-
+                }
             }
 
 
+
+
+        }
+        fun AlertDialog.dismissAfterDelay(delayMillis: Long) {
+            Handler(Looper.getMainLooper()).postDelayed({ this.dismiss() }, delayMillis)
         }
 
         // Extension function to dismiss dialog after a delay
-        fun androidx.appcompat.app.AlertDialog.dismissAfterDelay(delayMillis: Long) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                this.dismiss()
-            }, delayMillis)
-        }
+//        fun androidx.appcompat.app.AlertDialog.dismissAfterDelay(delayMillis: Long) {
+//            Handler(Looper.getMainLooper()).postDelayed({
+//                this.dismiss()
+//            }, delayMillis)
+//        }
 
 
         private fun showCustomPopupMenu(view: View, file: FileApp) {

@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.Adapter.MainPagerAdapter
 import com.example.doan.R
+import com.example.doan.const.Companion.ACTION_SORT_FILES
 import com.example.doan.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
         setupStatusBar()
         setupViewPagerWithTabs()
+        saveSortOption("clear")
+
 
         binding.btnAccount.setOnClickListener {
             if(!isUserLoggedIn()){
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             }else{
 
                 val popupMenu = PopupMenu(this, binding.btnAccount)
-                popupMenu.menuInflater.inflate(R.menu.file_options_main, popupMenu.menu)
+                popupMenu.menuInflater.inflate(R.menu.popup_options_main, popupMenu.menu)
 
                 popupMenu.setOnMenuItemClickListener { item ->
                     when (item.itemId) {
@@ -57,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         R.id.option_logout -> {
-                            Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Đăng xuất...", Toast.LENGTH_SHORT).show()
                             auth.signOut() // Log out the user
                             navigateToActivity(LoginActivity::class.java) // Redirect to login
                             true
@@ -69,6 +72,10 @@ class MainActivity : AppCompatActivity() {
                 popupMenu.show()
             }
         }
+
+
+
+
     }
 
     private fun setupStatusBar() {
@@ -134,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.file_options_main, menu)
+        menuInflater.inflate(R.menu.popup_options_main, menu)
         return true
     }
 
@@ -152,4 +159,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+    private fun saveSortOption(sortOption: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("sort_option", sortOption)
+        editor.apply()
+    }
+
+
 }

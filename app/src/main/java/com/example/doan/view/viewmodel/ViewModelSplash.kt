@@ -86,7 +86,7 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
 
     // Method to get files of multiple types
     fun getFileList() {
-        val types = listOf("xlsx", "pdf", "mp4", "mp3", "txt", "jpg") // Add more file types as needed
+        val types = listOf("xlsx", "pdf", "mp4", "mp3", "txt", "jpg","png","docx") // Add more file types as needed
         val allFiles = mutableListOf<FileApp>()
 
         types.forEach { type ->
