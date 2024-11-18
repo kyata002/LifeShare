@@ -1,0 +1,28 @@
+<!-- res/layout/dialog_upload_status.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_upload_file"
+    android:gravity="center"> <!-- Center content -->
+
+    <ImageView
+        android:id="@+id/dialog_icon"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_upload_filde"
+        />
+
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:text="Uploading..."
+        android:textSize="@dimen/_14sdp"
+        android:textColor="@android:color/white"
+        android:gravity="center" /> <!-- Center text inside TextView -->
+</LinearLayout>

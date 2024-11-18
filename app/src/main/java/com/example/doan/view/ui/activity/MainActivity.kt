@@ -37,32 +37,37 @@ class MainActivity : AppCompatActivity() {
         setupViewPagerWithTabs()
 
         binding.btnAccount.setOnClickListener {
-            val popupMenu = PopupMenu(this, binding.btnAccount)
-            popupMenu.menuInflater.inflate(R.menu.file_options_main, popupMenu.menu)
+            if(!isUserLoggedIn()){
+                navigateToActivity(LoginActivity::class.java)
+            }else{
 
-            popupMenu.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.option_profile -> {
-                        navigateToActivity(ProfileActivity::class.java)
-                        true
+                val popupMenu = PopupMenu(this, binding.btnAccount)
+                popupMenu.menuInflater.inflate(R.menu.file_options_main, popupMenu.menu)
+
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.option_profile -> {
+                            navigateToActivity(ProfileActivity::class.java)
+                            true
+                        }
+
+                        R.id.option_setting -> {
+                            navigateToActivity(SettingActivity::class.java)
+                            true
+                        }
+
+                        R.id.option_logout -> {
+                            Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
+                            auth.signOut() // Log out the user
+                            navigateToActivity(LoginActivity::class.java) // Redirect to login
+                            true
+                        }
+
+                        else -> false
                     }
-
-                    R.id.option_setting -> {
-                        navigateToActivity(SettingActivity::class.java)
-                        true
-                    }
-
-                    R.id.option_logout -> {
-                        Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
-                        auth.signOut() // Log out the user
-                        navigateToActivity(LoginActivity::class.java) // Redirect to login
-                        true
-                    }
-
-                    else -> false
                 }
+                popupMenu.show()
             }
-            popupMenu.show()
         }
     }
 
@@ -138,7 +143,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToActivity(targetActivity: Class<*>) {
-        val intent = Intent(this, targetActivity)
-        startActivity(intent)
+        if(targetActivity==LoginActivity::class.java){
+            val intent = Intent(this, targetActivity)
+            startActivity(intent)
+            finish()
+        }else{
+            val intent = Intent(this, targetActivity)
+            startActivity(intent)
+        }
     }
 }

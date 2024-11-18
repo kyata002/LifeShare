@@ -5,8 +5,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +20,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
+import com.example.doan.data.model.FileCloud
 import com.example.doan.data.model.MenuItemData
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.net.URLConnection
@@ -35,10 +44,11 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
     private val storage = FirebaseStorage.getInstance()  // Initialize FirebaseStorage instance
     private val storageRef = storage.reference
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
         context = parent.context
-        return FileViewHolder(LayoutInflater.from(context).inflate(R.layout.item_file, parent, false))
+        return FileViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_file, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
@@ -73,24 +83,124 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
 
             // Show more options menu
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
+
             btnUpload.setOnClickListener {
                 val fileUri = Uri.fromFile(File(file.path))
                 val fileRef = storageRef.child("uploads/${file.name}")
 
-                // Start the upload task
+                // Inflate the custom layout
+                val dialogView =
+                    LayoutInflater.from(context).inflate(R.layout.dialog_upload_status, null)
+                val dialogIcon: ImageView = dialogView.findViewById(R.id.dialog_icon)
+                val dialogMessage: TextView = dialogView.findViewById(R.id.dialog_message)
+
+                // Configure the dialog content and appearance
+                dialogMessage.text = "Tài liệu đang tải lên..."
+                dialogMessage.gravity = Gravity.CENTER  // Center align the text if needed
+                dialogIcon.setImageResource(R.drawable.ic_upload_filde)  // Initial uploading icon
+
+                // Create the AlertDialog and set the custom view
+                val progressDialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .create()
+
+                // Set transparent background for rounded corners to show
+                progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+                // Show the dialog
+                progressDialog.show()
+
+                // Check if file exists in Firebase Storage
                 fileRef.putFile(fileUri)
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Upload successful", Toast.LENGTH_SHORT).show()
+                        dialogMessage.text = "Tải tài liệu lên thành công!"
+                        dialogIcon.setImageResource(R.drawable.ic_success)  // Success icon
+
+                        // Get the download URL after upload
+                        fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
+
+                            // Get the next sequential ID for the file
+                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+                            if (userId != null) {
+                                val userRef = FirebaseDatabase.getInstance().getReference("users")
+                                    .child(userId)
+
+                                // Fetch the current list of files to get the next ID
+                                userRef.child("listAppUp").addListenerForSingleValueEvent(object :
+                                    ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        // Get the last file ID or count
+                                        val currentFiles = snapshot.children.toList()
+                                        val nextId =
+                                            currentFiles.size + 1  // Increment for the next file ID
+
+                                        // Create the FileApp object with the file details
+                                        val uploadedFile = FileCloud(
+                                            name = file.name,
+                                            path = file.path,
+                                            type = file.type,
+                                            size = file.size,
+                                            lastModified = file.lastModified,
+                                            downloadUrl = downloadUri.toString(),  // Add the download URL here
+                                            fileId = nextId  // Include the sequential ID
+                                        )
+
+                                        // Push the uploaded file to the listAppUp with the new ID
+                                        userRef.child("listAppUp").child(nextId.toString())
+                                            .setValue(uploadedFile)
+                                            .addOnSuccessListener {
+                                                progressDialog.dismissAfterDelay(1500)
+                                                Toast.makeText(
+                                                    context,
+                                                    "File added to listAppUp!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            .addOnFailureListener {
+                                                progressDialog.dismissAfterDelay(1500)
+                                                Toast.makeText(
+                                                    context,
+                                                    "Failed to update listAppUp.",
+                                                    Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        progressDialog.dismissAfterDelay(1500)
+                                        Toast.makeText(
+                                            context,
+                                            "Error fetching data",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                })
+                            }
+                        }.addOnFailureListener { downloadException ->
+                            // Handle failure to get the download URL
+                            dialogMessage.text = "Lỗi lấy link tải: ${downloadException.message}"
+                            dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
+                            progressDialog.dismissAfterDelay(1500)
+                        }
                     }
-                    .addOnFailureListener { exception ->
-                        Toast.makeText(
-                            context,
-                            "Upload failed: ${exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    .addOnFailureListener { uploadException ->
+                        dialogMessage.text = "Tải lên thất bại: ${uploadException.message}"
+                        dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
+                        progressDialog.dismissAfterDelay(1500)
                     }
+
             }
+
+
         }
+
+        // Extension function to dismiss dialog after a delay
+        fun androidx.appcompat.app.AlertDialog.dismissAfterDelay(delayMillis: Long) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                this.dismiss()
+            }, delayMillis)
+        }
+
 
         private fun showCustomPopupMenu(view: View, file: FileApp) {
             val listPopupWindow = ListPopupWindow(view.context)
@@ -170,7 +280,11 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
 
         private fun getSizeText(size: Long): String {
             val sizeKB = size / 1024.0
-            return "Kích thước: ${if (sizeKB >= 1024) "%.2fMB".format(sizeKB / 1024) else "%.2fKB".format(sizeKB)}"
+            return "Kích thước: ${
+                if (sizeKB >= 1024) "%.2fMB".format(sizeKB / 1024) else "%.2fKB".format(
+                    sizeKB
+                )
+            }"
         }
     }
 

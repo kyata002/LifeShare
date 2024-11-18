@@ -71,39 +71,47 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // User registered successfully
-                    val firebaseUser: FirebaseUser = auth.currentUser!!
-                    val userId = firebaseUser.uid
-                    val userRef: DatabaseReference = mDatabase!!.child(userId) // Create reference to user's node
+                    val firebaseUser: FirebaseUser? = auth.currentUser
+                    if (firebaseUser != null) {
+                        val userId = firebaseUser.uid
+                        val userRef: DatabaseReference = mDatabase!!.child(userId) // Create reference to user's node
 
-                    // Create the AccountModel object
-                    val user = AccountModel(
-                        id = userId,           // Pass the Firebase UID as id
-                        username = username,
-                        email = email,
-                        password = password,
-                        numberphone = phoneNumber
-                    )
+                        // Create the AccountModel object
+                        val user = AccountModel(
+                            id = userId,           // Pass the Firebase UID as id
+                            username = username,
+                            email = email,
+                            password = password,   // Consider removing this from the database for security
+                            numberphone = phoneNumber,
+                            listAppUp = emptyList(),
+                            listShare = emptyList()
+                        )
 
-                    // Map the user data to be pushed to Firebase
-                    val dataMap = hashMapOf<String, Any>(
-                        "id" to user.id,
-                        "name" to user.username,
-                        "email" to user.email,
-                        "phone" to user.numberphone,
-                        "pass" to user.password
-                    )
+                        // Map the user data to be pushed to Firebase
+                        val dataMap = hashMapOf<String, Any>(
+                            "id" to user.id,
+                            "name" to user.username,
+                            "email" to user.email,
+                            "phone" to user.numberphone,
+                            "listAppUp" to user.listAppUp,
+                            "listShare" to user.listShare
+                        )
 
-                    // Push user data to Firebase
-                    userRef.setValue(dataMap)
-                        .addOnSuccessListener {
-                            // User data saved successfully
-                            navigateToActivity(LoginActivity::class.java)
-                            finish() // End the current activity
-                        }
-                        .addOnFailureListener {
-                            // Handle failure in data saving
-                            Toast.makeText(context, "Failed to save user data", Toast.LENGTH_SHORT).show()
-                        }
+                        // Push user data to Firebase
+                        userRef.setValue(dataMap)
+                            .addOnSuccessListener {
+                                // User data saved successfully
+                                navigateToActivity(LoginActivity::class.java)
+                                finish() // End the current activity
+                            }
+                            .addOnFailureListener {
+                                // Handle failure in data saving
+                                Toast.makeText(context, "Failed to save user data", Toast.LENGTH_SHORT).show()
+                            }
+                    } else {
+                        // Handle case where currentUser is null
+                        Toast.makeText(context, "User creation failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     // User registration failed
                     if (task.exception is FirebaseAuthUserCollisionException) {
@@ -114,6 +122,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
     }
+
 
     @SuppressLint("ObsoleteSdkInt")
     private fun setupStatusBar() {
