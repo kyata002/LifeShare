@@ -13,17 +13,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ListPopupWindow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
-import com.example.doan.const.Companion.BASE_URL
 import com.example.doan.data.model.MenuItemData
-import com.example.doan.service.UploadFileToCloudfy
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
-import com.google.firebase.Firebase
-import com.google.firebase.database.database
+import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.net.URLConnection
 import java.text.SimpleDateFormat
@@ -34,6 +32,9 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
     RecyclerView.Adapter<FileDeviceAdapter.FileViewHolder>() {
 
     lateinit var context: Context
+    private val storage = FirebaseStorage.getInstance()  // Initialize FirebaseStorage instance
+    private val storageRef = storage.reference
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
         context = parent.context
@@ -74,9 +75,20 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
             btnUpload.setOnClickListener {
                 val fileUri = Uri.fromFile(File(file.path))
-                val apiKey = "YOUR_API_KEY"  // Replace with your actual API key
-//                val baseUrl = "https://example.com/api/"  // Replace with the actual base URL
-                UploadFileToCloudfy.uploadFileToCloudfy(context, fileUri, apiKey, BASE_URL)
+                val fileRef = storageRef.child("uploads/${file.name}")
+
+                // Start the upload task
+                fileRef.putFile(fileUri)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Upload successful", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { exception ->
+                        Toast.makeText(
+                            context,
+                            "Upload failed: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             }
         }
 
