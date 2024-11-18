@@ -16,7 +16,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
+import com.example.doan.const.Companion.BASE_URL
 import com.example.doan.data.model.MenuItemData
+import com.example.doan.service.UploadFileToCloudfy
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
@@ -71,10 +73,10 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
             // Show more options menu
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
             btnUpload.setOnClickListener {
-                val database = Firebase.database
-                val myRef = database.getReference("message")
-
-                myRef.setValue("Hello, World!")
+                val fileUri = Uri.fromFile(File(file.path))
+                val apiKey = "YOUR_API_KEY"  // Replace with your actual API key
+//                val baseUrl = "https://example.com/api/"  // Replace with the actual base URL
+                UploadFileToCloudfy.uploadFileToCloudfy(context, fileUri, apiKey, BASE_URL)
             }
         }
 

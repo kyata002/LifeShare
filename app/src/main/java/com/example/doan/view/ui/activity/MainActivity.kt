@@ -6,21 +6,20 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.widget.PopupMenu
-import androidx.activity.viewModels
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.doan.Adapter.MainPagerAdapter
 import com.example.doan.R
 import com.example.doan.databinding.ActivityMainBinding
-import com.example.doan.view.viewmodel.ViewModelMain
 import com.google.android.material.tabs.TabLayoutMediator
-import android.widget.Toast
-import androidx.core.view.WindowInsetsControllerCompat
+import com.google.firebase.auth.FirebaseAuth
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: ViewModelMain by viewModels()
+    private lateinit var auth: FirebaseAuth
 
     private val sharedPreferences: SharedPreferences by lazy {
         getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -30,6 +29,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize FirebaseAuth instance
+        auth = FirebaseAuth.getInstance()
 
         setupStatusBar()
         setupViewPagerWithTabs()
@@ -51,7 +53,9 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     R.id.option_logout -> {
-                        Toast.makeText(this, "Chi tiết selected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
+                        auth.signOut() // Log out the user
+                        navigateToActivity(LoginActivity::class.java) // Redirect to login
                         true
                     }
 
@@ -64,11 +68,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Đặt nền của thanh trạng thái
             window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
-
-            // Đặt màu biểu tượng (tối hoặc sáng)
-            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true // hoặc false cho biểu tượng sáng
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         } else {
             window.statusBarColor = ContextCompat.getColor(this, R.color.Main)
         }
@@ -78,6 +79,9 @@ class MainActivity : AppCompatActivity() {
         val adapter = MainPagerAdapter(this) {
             if (!isUserLoggedIn()) {
                 navigateToActivity(LoginActivity::class.java)
+                false // Return false if not logged in
+            } else {
+                true // User is logged in
             }
         }
 
@@ -98,8 +102,31 @@ class MainActivity : AppCompatActivity() {
                     tab.setIcon(R.drawable.ic_file_share)
                 }
             }
+
+            // Set a click listener for each tab
+            tab.view.setOnClickListener {
+                // Execute any specific action for each tab here
+                when (position) {
+                    0 -> {
+                        // No login check for "File Device" tab
+                    }
+                    1 -> {
+                        // Check login for "File Com" tab
+                        if (!isUserLoggedIn()) {
+                            navigateToActivity(LoginActivity::class.java)
+                        }
+                    }
+                    2 -> {
+                        // Check login for "File Share" tab
+                        if (!isUserLoggedIn()) {
+                            navigateToActivity(LoginActivity::class.java)
+                        }
+                    }
+                }
+            }
         }.attach()
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.file_options_main, menu)
@@ -107,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isUserLoggedIn(): Boolean {
-        return sharedPreferences.getBoolean("isLoggedIn", false)
+        return auth.currentUser != null
     }
 
     private fun navigateToActivity(targetActivity: Class<*>) {
