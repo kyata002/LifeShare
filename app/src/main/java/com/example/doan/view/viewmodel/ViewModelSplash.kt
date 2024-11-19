@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.doan.data.model.FileVideo
 import com.example.doan.view.ui.activity.MainActivity
 import com.example.doan.view.ui.activity.SplashActivity
 import com.example.doan.view.ui.dialog.PermissionRequestDialog
@@ -21,6 +22,10 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _files = MutableLiveData<List<FileApp>>()
     val files: LiveData<List<FileApp>> get() = _files
+    private var videpList = mutableListOf<FileVideo>()
+
+    private val _mp4Files = MutableLiveData<List<FileApp>>()
+    val mp4Files: LiveData<List<FileApp>> get() = _mp4Files
 
     private val _navigateTo = MutableLiveData<Class<*>>()
     val navigateTo: LiveData<Class<*>> = _navigateTo
@@ -84,9 +89,8 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
         return list
     }
 
-    // Method to get files of multiple types
     fun getFileList() {
-        val types = listOf("xlsx", "pdf", "mp4", "mp3", "txt", "jpg","png","docx") // Add more file types as needed
+        val types = listOf("xlsx", "pdf", "mp4", "mp3", "txt", "jpg", "png", "docx") // Add more file types as needed
         val allFiles = mutableListOf<FileApp>()
 
         types.forEach { type ->
@@ -102,6 +106,30 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
             }
             allFiles.addAll(fileApps)
         }
+
+        // Post all files to LiveData
         _files.postValue(allFiles)
+
+        // Filter and post only mp4 files
+        val mp4Files = allFiles.filter { it.type == "mp4" }
+        _mp4Files.postValue(mp4Files)
+
+        // Manually update videpList with the mp4 files
+        videpList = mp4Files.map { file ->
+            FileVideo(
+                name = file.name,
+                path = file.path,
+                size = file.size,
+                type = file.type,
+                lastModified = file.lastModified
+            )
+        }.toMutableList()
     }
+    data class FileVideo(
+        val name: String,
+        val path: String,
+        val size: Long,
+        val type: String,
+        val lastModified: Long
+    )
 }

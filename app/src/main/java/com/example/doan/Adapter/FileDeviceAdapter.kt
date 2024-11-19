@@ -19,10 +19,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
 import com.example.doan.data.model.FileCloud
 import com.example.doan.data.model.MenuItemData
+import com.example.doan.view.ui.activity.VideoPlayerActivity
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
@@ -174,6 +176,36 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 }
             }
 
+            itemView.setOnClickListener {
+                when (file.type) {
+//                    "pdf" -> {
+//                        // Open PDF file in PDF viewer
+//                        val intent = Intent(context, PdfViewerActivity::class.java).apply {
+//                            putExtra("FILE_PATH", file.path)
+//                        }
+//                        context.startActivity(intent)
+//                    }
+                    "mp4" -> {
+                        val intent = Intent(context, VideoPlayerActivity::class.java).apply {
+                            putExtra("FILE_PATH", file.path)
+                        }
+                        (context as AppCompatActivity).startActivity(intent)
+
+                    }
+//                    ?
+//                    "jpg", "png" -> {
+//                        // Open Image file
+//                        val intent = Intent(context, ImageViewerActivity::class.java).apply {
+//                            putExtra("FILE_PATH", file.path)
+//                        }
+//                        context.startActivity(intent)
+//                    }
+//                    else -> {
+//                        // Handle other file types, or show an alert
+//                        Toast.makeText(context, "Không hỗ trợ xem loại tệp này", Toast.LENGTH_SHORT).show()
+//                    }
+                }
+            }
 
 
 
