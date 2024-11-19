@@ -9,25 +9,27 @@ import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ListPopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
 import com.example.doan.data.model.FileCloud
 import com.example.doan.data.model.MenuItemData
-import com.example.doan.view.ui.activity.VideoPlayerActivity
+import com.example.doan.view.ui.viewfile.PdfViewerActivity
+import com.example.doan.view.ui.viewfile.ImageViewActivity
+import com.example.doan.view.ui.viewfile.VideoPlayerActivity
 import com.example.doan.view.ui.dialog.DeleteDialog
 import com.example.doan.view.ui.dialog.DetailDialog
 import com.example.doan.view.ui.dialog.RenameDialog
+import com.example.doan.view.ui.viewfile.DocxViewActivity
+import com.example.doan.view.ui.viewfile.ExcelViewActivity
+import com.example.doan.view.ui.viewfile.TxtViewActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -102,7 +104,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 dialogIcon.setImageResource(R.drawable.ic_upload_filde)  // Uploading icon
 
                 // Create and show the progress dialog
-                val progressDialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                val progressDialog = AlertDialog.Builder(context)
                     .setView(dialogView)
                     .setCancelable(false)
                     .create()
@@ -178,13 +180,12 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
 
             itemView.setOnClickListener {
                 when (file.type) {
-//                    "pdf" -> {
-//                        // Open PDF file in PDF viewer
-//                        val intent = Intent(context, PdfViewerActivity::class.java).apply {
-//                            putExtra("FILE_PATH", file.path)
-//                        }
-//                        context.startActivity(intent)
-//                    }
+                    "pdf" -> {
+                        val intent = Intent(context, PdfViewerActivity::class.java).apply {
+                            putExtra("FILE_PATH", file.path)
+                        }
+                        (context as AppCompatActivity).startActivity(intent)
+                    }
                     "mp4" -> {
                         val intent = Intent(context, VideoPlayerActivity::class.java).apply {
                             putExtra("FILE_PATH", file.path)
@@ -192,14 +193,34 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                         (context as AppCompatActivity).startActivity(intent)
 
                     }
-//                    ?
-//                    "jpg", "png" -> {
-//                        // Open Image file
-//                        val intent = Intent(context, ImageViewerActivity::class.java).apply {
+                    "txt" -> {
+                        val intent = Intent(context, TxtViewActivity::class.java).apply {
+                            putExtra("FILE_PATH", file.path)
+                        }
+                        (context as AppCompatActivity).startActivity(intent)
+
+                    }
+                    "docx" -> {
+//                        val intent = Intent(context, DocxViewActivity::class.java).apply {
 //                            putExtra("FILE_PATH", file.path)
 //                        }
-//                        context.startActivity(intent)
-//                    }
+//                        (context as AppCompatActivity).startActivity(intent)
+                        showFileNotSupportedDialog(context)
+                    }
+
+                    "jpg", "png" -> {
+                        val intent = Intent(context, ImageViewActivity::class.java).apply {
+                            putExtra("FILE_PATH", file.path)
+                        }
+                        (context as AppCompatActivity).startActivity(intent)
+                    }
+                    "xlsx" -> {
+//                        val intent = Intent(context, ExcelViewActivity::class.java).apply {
+//                            putExtra("FILE_PATH", file.path)
+//                        }
+//                        (context as AppCompatActivity).startActivity(intent)
+                        showFileNotSupportedDialog(context)
+                    }
 //                    else -> {
 //                        // Handle other file types, or show an alert
 //                        Toast.makeText(context, "Không hỗ trợ xem loại tệp này", Toast.LENGTH_SHORT).show()
@@ -222,6 +243,16 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
 //        }
 
 
+        private fun showFileNotSupportedDialog(context: Context) {
+            AlertDialog.Builder(context)
+                .setTitle("File không được hỗ trợ")
+                .setMessage("Định dạng tệp này chưa được hỗ trợ. Chúng tôi sẽ nâng cấp sớm nhất")
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setCancelable(false)
+                .show()
+        }
         private fun showCustomPopupMenu(view: View, file: FileApp) {
             val listPopupWindow = ListPopupWindow(view.context)
             val menuItems = listOf(

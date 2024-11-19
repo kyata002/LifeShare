@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.doan"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -65,6 +65,12 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.71828")
 
     implementation ("com.github.skydoves:powermenu:2.2.0")
+//    implementation ("org.apache.poi:poi-ooxml:5.2.3")
+    implementation ("org.apache.poi:poi:5.2.2")
+    implementation ("org.apache.poi:poi-ooxml:5.2.2")
+//    implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
+//    implementation ("com.github.datcorona:CommonLibs:1.0.7")
+
 
 
 }

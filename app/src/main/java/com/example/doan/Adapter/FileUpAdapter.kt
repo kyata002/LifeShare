@@ -162,10 +162,8 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
         private fun setFileIcon(file: FileCloud, imgViewFile: ImageView) {
             if (file.type.contains("jpg", ignoreCase = true) || file.type.contains("jpeg", ignoreCase = true) || file.type.contains("png", ignoreCase = true)) {
                 // Check if the download URL is available before loading the image
-                file.downloadUrl?.let {
+                file.downloadUrl.let {
                     Picasso.get().load(it).into(imgViewFile)
-                } ?: run {
-                    imgViewFile.setImageResource(R.drawable.ic_file_device)  // Fallback icon if download URL is null
                 }
             } else {
                 // Set an icon based on the file extension for non-image files

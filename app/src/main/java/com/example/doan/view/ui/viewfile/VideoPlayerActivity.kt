@@ -1,6 +1,5 @@
-package com.example.doan.view.ui.activity
+package com.example.doan.view.ui.viewfile
 
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.widget.MediaController

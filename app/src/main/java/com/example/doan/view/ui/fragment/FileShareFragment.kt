@@ -9,11 +9,6 @@ import com.example.doan.R
 
 class FileShareFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -22,7 +17,5 @@ class FileShareFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_file_share, container, false)
     }
 
-    companion object {
-
-    }
+    companion object
 }
