@@ -63,7 +63,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
         fun bind(file: FileCloud) {
             tvName.text = file.name
             dateFile.text = "Last Modified: ${formatDate(file.lastModified)}"
-            sizeFile.text = getSizeText(file.size)
+            sizeFile.text = "Size:${getSizeText(file.size)}"
             tvType.text = "Type: ${file.type}"
             setFileIcon(file, imgViewFile)
 
@@ -358,6 +358,47 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
                         tvWarring.setText("Email không đúng cấu trúc")
                     } else {
                         tvWarring.visibility = View.GONE
+
+                        // Chuẩn hóa email (xóa ký tự đặc biệt)
+                        val sanitizedEmail = email.replace(".", "").replace("@", "")
+
+                        // Tham chiếu tới nút "listShare" trong Firebase Realtime Database
+                        val databaseReference = FirebaseDatabase.getInstance()
+                            .getReference("users")
+                            .child(sanitizedEmail)
+                            .child("listShare")
+
+                        // Tạo dữ liệu file để lưu trữ
+                        val fileData = mapOf(
+                            "fileId" to file.fileId,
+                            "name" to file.name,
+                            "type" to file.type,
+                            "size" to file.size,
+                            "lastModified" to file.lastModified,
+                            "location" to file.location,
+                            "downloadUrl" to file.downloadUrl
+                        )
+
+                        // Upload dữ liệu file vào nút "listShare"
+                        databaseReference.child(file.fileId.toString()).setValue(fileData)
+                            .addOnSuccessListener {
+                                // Hiển thị thông báo thành công
+                                Toast.makeText(
+                                    context,
+                                    "File đã được chia sẻ đến $email",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            .addOnFailureListener { exception ->
+                                // Hiển thị thông báo lỗi
+                                Toast.makeText(
+                                    context,
+                                    "Chia sẻ file thất bại: ${exception.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                        // Đóng dialog
                         alertDialog.dismiss()
                     }
                 } else if (rbCommunityS.isChecked) {

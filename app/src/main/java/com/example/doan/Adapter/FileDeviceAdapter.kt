@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
+import com.example.doan.const.Companion.ACTION_FILE_UPLOADED
 import com.example.doan.data.model.FileCloud
 import com.example.doan.data.model.MenuItemData
 import com.example.doan.view.ui.viewfile.PdfViewerActivity
@@ -125,9 +126,12 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                             dialogMessage.text = "Tải lên thành công!"
                             dialogIcon.setImageResource(R.drawable.ic_success)
 
+                            // File uploaded successfully, now we need to refresh the file list in the community fragment
                             fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                // Get current user email, sanitize it, and get reference to Firebase
                                 val sanitizedEmail = FirebaseAuth.getInstance().currentUser?.email
                                     ?.replace(".", "")?.replace("@", "")
+
                                 if (sanitizedEmail != null) {
                                     val userRef = FirebaseDatabase.getInstance().getReference("users").child(sanitizedEmail)
 
@@ -147,21 +151,27 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                                                     fileId = nextId
                                                 )
 
+                                                // Add uploaded file to Firebase under listAppUp
                                                 userRef.child("listAppUp").child(nextId.toString())
                                                     .setValue(uploadedFile)
                                                     .addOnSuccessListener {
-                                                        dialogMessage.text =
-                                                            "File đã được thêm vào danh sách thành công!"
+                                                        dialogMessage.text = "File đã được thêm vào danh sách thành công!"
                                                         dialogIcon.setImageResource(R.drawable.ic_success)
                                                         progressDialog.dismissAfterDelay(1500)
+
+                                                        // Refresh the list of files in the community fragment
+                                                        val uploadSuccessIntent = Intent(ACTION_FILE_UPLOADED)
+                                                        uploadSuccessIntent.putExtra("message", "File uploaded successfully!") // Optional data to pass
+                                                        context?.sendBroadcast(uploadSuccessIntent)
+
                                                     }
                                                     .addOnFailureListener {
-                                                        dialogMessage.text =
-                                                            "Lỗi: Không thể thêm file vào danh sách."
+                                                        dialogMessage.text = "Lỗi: Không thể thêm file vào danh sách."
                                                         dialogIcon.setImageResource(R.drawable.ic_failed)
                                                         progressDialog.dismissAfterDelay(1500)
                                                     }
                                             }
+
 
                                             override fun onCancelled(error: DatabaseError) {
                                                 dialogMessage.text = "Lỗi khi truy xuất dữ liệu: ${error.message}"
@@ -174,7 +184,8 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                                     dialogIcon.setImageResource(R.drawable.ic_failed)
                                     progressDialog.dismissAfterDelay(1500)
                                 }
-                            }.addOnFailureListener { downloadException ->
+
+                        }.addOnFailureListener { downloadException ->
                                 dialogMessage.text = "Lỗi khi lấy đường dẫn tải: ${downloadException.message}"
                                 dialogIcon.setImageResource(R.drawable.ic_failed)
                                 progressDialog.dismissAfterDelay(1500)

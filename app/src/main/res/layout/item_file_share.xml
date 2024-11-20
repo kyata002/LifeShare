@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <FrameLayout
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp">
+            <ImageView
+                android:id="@+id/img_view_files"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:background="@drawable/ic_file_device"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/_12sdp"
+            android:orientation="vertical"
+            android:layout_width="0dp">
+
+            <TextView
+                android:id="@+id/name_files"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/date_files"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:singleLine="true"
+                    android:text="@string/app_name"
+                    android:textColor="#838388"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="bold"
+                    android:maxLines="2"/>
+                <TextView
+                    android:id="@+id/tvtypes"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:singleLine="true"
+                    android:text="@string/app_name"
+                    android:textColor="#838388"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="bold"
+                    android:maxLines="2"/>
+
+            </LinearLayout>
+            <TextView
+                android:id="@+id/size_files"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:fontFamily="@font/"
+                android:singleLine="true"
+                android:layout_gravity="right"
+                android:gravity="left"
+                android:text="@string/app_name"
+                android:textColor="#838388"
+                android:textSize="@dimen/_8sdp"
+                android:textStyle="bold"
+                android:layout_height="match_parent"/>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_downloads"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:src="@drawable/ic_download"
+            android:checked="false"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <ImageView
+            android:id="@+id/btn_details"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_detail"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            />
+
+
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_linesperate"
+        android:layout_marginStart="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_10sdp" />
+
+</LinearLayout>
