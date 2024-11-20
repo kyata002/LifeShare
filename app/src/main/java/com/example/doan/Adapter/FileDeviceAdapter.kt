@@ -144,7 +144,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                                                     name = file.name,
                                                     size = file.size,
                                                     type = file.type,
-                                                    path = file.path,
+//                                                    path = file.path,
                                                     lastModified = file.lastModified,
                                                     downloadUrl = downloadUri.toString(),
                                                     location = "uploads/${file.name}",

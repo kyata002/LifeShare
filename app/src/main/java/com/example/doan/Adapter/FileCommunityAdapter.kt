@@ -1,12 +1,25 @@
 package com.example.doan.Adapter
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
 import com.example.doan.data.model.FileCloud
 import com.example.doan.databinding.ItemFileShareBinding
+import com.example.doan.view.ui.dialog.DetailDialog
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,20 +34,78 @@ class FileCommunityAdapter(private var fileList: List<FileCloud>) : RecyclerView
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         val file = fileList[position]
+        val context = holder.binding.root.context
         // Bind file data to views using binding
         holder.binding.nameFiles.text = file.name ?: "Unknown File Name"
-        holder.binding.sizeFiles.text = "Size:${getSizeText(file.size)}"
-        holder.binding.dateFiles.text = "Last Modified: ${formatDate(file.lastModified)}"
-        holder.binding.tvtypes.text = "Type: ${file.type}"
-
+        holder.binding.sizeFiles.text = "Dung lượng:${getSizeText(file.size)}"
+        holder.binding.dateFiles.text = "Thời gian: ${formatDate(file.lastModified)}"
+        holder.binding.tvtypes.text = "Loại: ${file.type}"
+        holder.binding.btnDownloads.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                file.name?.let { fileName ->
+                    downloadFile(context, fileName, file.downloadUrl)
+                } ?: Toast.makeText(context, "File name not available", Toast.LENGTH_SHORT).show()
+            }
+        }
+        holder.binding.btnDetails.setOnClickListener {
+            showDetailDialog(context,file)
+        }
         setFileIcon(file, holder.binding.imgViewFiles)
+    }
+
+    private fun showDetailDialog(context: Context,file: FileCloud) {
+        val intent = Intent(context, DetailDialog::class.java).apply {
+            putExtra("FILE_DETAILS", file)
+            putExtra("FILE_TYPE", "CLOUD")
+        }
+        context.startActivity(intent)
+    }
+
+    private fun downloadFile(context: Context, fileName: String, fileUrl: String) {
+        val dialogBuilder = AlertDialog.Builder(context)
+            .setTitle("Đang tải xuống")
+            .setMessage("Vui lòng chờ...")
+            .setCancelable(false)
+
+        val progressBar = ProgressBar(context)
+        dialogBuilder.setView(progressBar)
+        val downloadDialog = dialogBuilder.create()
+        downloadDialog.show()
+
+        val request = DownloadManager.Request(Uri.parse(fileUrl)).apply {
+            setTitle("Downloading $fileName")
+            setDescription("Downloading file...")
+            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        }
+
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = downloadManager.enqueue(request)
+
+        val onCompleteReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if (id == downloadId) {
+                    downloadDialog.dismiss()
+                    Toast.makeText(context, "Tải xuống $fileName thành công", Toast.LENGTH_SHORT).show()
+                    try {
+                        context?.unregisterReceiver(this)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
+        context.registerReceiver(onCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     override fun getItemCount(): Int = fileList.size
 
-    fun updateData(newFileList: List<FileCloud>) {
-        fileList = newFileList
-        notifyDataSetChanged()
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateFiles(newFiles: List<FileCloud>) {
+        fileList = newFiles
+        notifyDataSetChanged()  // Use DiffUtil for better performance in production
     }
     private fun getSizeText(size: Long): String {
         val sizeKB = size / 1024.0

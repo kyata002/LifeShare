@@ -1,9 +1,14 @@
 package com.example.doan.view.ui.fragment
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.Adapter.FileCommunityAdapter
 import com.example.doan.Adapter.FileShareFileAdapter
 import com.example.doan.R
+import com.example.doan.const.Companion.ACTION_SORT_FILES
 import com.example.doan.data.model.FileCloud
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -28,7 +34,10 @@ class FileShareFragment : Fragment() {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private lateinit var tvCom: TextView
+    val filesList = mutableListOf<FileCloud>()
     private lateinit var tvShare: TextView
+    private lateinit var btnSort: ImageView
+    private  var isCheck: Boolean = true
 
 
     override fun onCreateView(
@@ -43,6 +52,7 @@ class FileShareFragment : Fragment() {
         rcvFileCommunity = view.findViewById(R.id.rcv_file_Community)
         tvCom = view.findViewById(R.id.btn_community)
         tvShare = view.findViewById(R.id.btn_data_share)
+        btnSort = view.findViewById(R.id.btn_sorts)
         refreshFileList1()
 
         tvShare.setOnClickListener {
@@ -53,6 +63,7 @@ class FileShareFragment : Fragment() {
             rcvFileShare.visibility=View.VISIBLE
             rcvFileCommunity.visibility=View.GONE
             refreshFileList()
+            isCheck=true
         }
 
         tvCom.setOnClickListener {
@@ -63,6 +74,70 @@ class FileShareFragment : Fragment() {
             rcvFileShare.visibility=View.GONE
             rcvFileCommunity.visibility=View.VISIBLE
             refreshFileList1()
+            isCheck=false
+        }
+        btnSort.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), btnSort)
+            popupMenu.menuInflater.inflate(R.menu.popup_sort, popupMenu.menu)
+
+            // Retrieve saved sort option from SharedPreferences
+            val savedSortOption =
+                requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    .getString("sort_option", "a_to_z") // Default to "a_to_z"
+
+            // Set checked state based on saved sort option
+            when (savedSortOption) {
+                "a_to_z" -> popupMenu.menu.findItem(R.id.a_to_z).isChecked = true
+                "z_to_a" -> popupMenu.menu.findItem(R.id.z_to_a).isChecked = true
+                "by_size" -> popupMenu.menu.findItem(R.id.by_size).isChecked = true
+                "by_date" -> popupMenu.menu.findItem(R.id.by_date).isChecked = true
+            }
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.a_to_z -> {
+                        sortFileList("a_to_z")
+                        saveSortOption("a_to_z")
+                        true
+                    }
+
+                    R.id.z_to_a -> {
+                        sortFileList("z_to_a")
+                        saveSortOption("z_to_a")
+                        true
+                    }
+
+                    R.id.by_size -> {
+                        sortFileList("by_size")
+                        saveSortOption("by_size")
+                        true
+                    }
+
+                    R.id.by_date -> {
+                        sortFileList("by_date")
+                        saveSortOption("by_date")
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+// Use reflection to access the internal PopupMenu popup and set the background
+            try {
+                val fieldPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                fieldPopup.isAccessible = true
+                val popup = fieldPopup.get(popupMenu)
+                popup.javaClass.getDeclaredMethod("setBackgroundDrawable", Drawable::class.java)
+                    .invoke(
+                        popup,
+                        ContextCompat.getDrawable(requireContext(), R.drawable.bg_menu_sort)
+                    )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            popupMenu.show()
         }
 
 //        rcvFileShare.layoutManager = LinearLayoutManager(requireContext())
@@ -92,7 +167,6 @@ class FileShareFragment : Fragment() {
                     progressBar.visibility = View.GONE
 
                     if (snapshot.exists()) {
-                        val filesList = mutableListOf<FileCloud>()
 
                         // Populate the list with data from the snapshot
                         for (fileSnapshot in snapshot.children) {
@@ -106,7 +180,7 @@ class FileShareFragment : Fragment() {
                             val location = fileSnapshot.child("location").getValue(String::class.java) ?: ""
 
                             // Create a FileCloud object and add it to the list
-                            val file = FileCloud(name, size, type, path, lastModified, downloadUrl, location, fileId)
+                            val file = FileCloud(name, size, type, lastModified, downloadUrl, location, fileId)
                             filesList.add(file)
                         }
 
@@ -169,7 +243,7 @@ class FileShareFragment : Fragment() {
                             val location = fileSnapshot.child("location").getValue(String::class.java) ?: ""
 
                             // Create a FileCloud object and add it to the list
-                            val file = FileCloud(name, size, type, path, lastModified, downloadUrl, location, fileId)
+                            val file = FileCloud(name, size, type, lastModified, downloadUrl, location, fileId)
                             filesList.add(file)
                         }
 
@@ -211,6 +285,31 @@ class FileShareFragment : Fragment() {
     // Extension function to sanitize email
     private fun String.sanitizeEmail(): String {
         return replace(".", "").replace("@", "")
+    }
+    private fun sortFileList(sortOption: String?) {
+        when (sortOption) {
+            "a_to_z" -> fileListShare.sortBy { it.name }
+            "z_to_a" -> fileListShare.sortByDescending { it.name }
+            "by_size" -> fileListShare.sortBy { it.size }
+            "by_date" -> fileListShare.sortBy { it.lastModified }
+        }
+        if(isCheck){
+
+            fileShareAdapter.updateFiles(fileListShare)
+        }else{
+
+            fileShareFileAdapter.updateFiles(fileListShare)
+        }
+         // Update adapter to reflect changes
+    }
+    private fun saveSortOption(sortOption: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("sort_option", sortOption).apply()
+
+        // Broadcast the sort option
+        val intent = Intent(ACTION_SORT_FILES)
+        intent.putExtra("sort_option", sortOption)
+        requireContext().sendBroadcast(intent)
     }
 }
 

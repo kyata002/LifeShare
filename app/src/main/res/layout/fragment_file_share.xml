@@ -54,7 +54,7 @@
         <!-- "Cộng đồng" Button -->
 
         <ImageView
-            android:id="@+id/btn_sort"
+            android:id="@+id/btn_sorts"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"

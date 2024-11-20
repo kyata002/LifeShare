@@ -46,9 +46,10 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
 
     override fun getItemCount(): Int = fileList.size
 
-    fun updateFileList(newFiles: List<FileCloud>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateFiles(newFiles: List<FileCloud>) {
         fileList = newFiles
-        notifyDataSetChanged()
+        notifyDataSetChanged()  // Use DiffUtil for better performance in production
     }
 
     inner class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -62,9 +63,9 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
 
         fun bind(file: FileCloud) {
             tvName.text = file.name
-            dateFile.text = "Last Modified: ${formatDate(file.lastModified)}"
-            sizeFile.text = "Size:${getSizeText(file.size)}"
-            tvType.text = "Type: ${file.type}"
+            dateFile.text = "Thời gian: ${formatDate(file.lastModified)}"
+            sizeFile.text = "Dung lượng:${getSizeText(file.size)}"
+            tvType.text = "Loại: ${file.type}"
             setFileIcon(file, imgViewFile)
 
             btnMore.setOnClickListener { showCustomPopupMenu(it, file) }
@@ -188,7 +189,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
             val context = itemView.context
             val intent = Intent(context, RenameDialog::class.java).apply {
                 putExtra("FILE_LOCA", file.location) // Đường dẫn Firebase Storage
-                putExtra("FILE_PATH", file.path) // Đường dẫn Firebase Storage
+//                putExtra("FILE_PATH", file.path) // Đường dẫn Firebase Storage
                 putExtra("FILE_TYPE", "CLOUD")
                 putExtra("FILE_ID", file.fileId)// Chỉ định kiểu file là Cloud
                 putExtra("FILE_POSITION", adapterPosition) // Vị trí trong danh sách

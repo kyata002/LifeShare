@@ -6,7 +6,7 @@ data class FileCloud(
     var name: String,
     val size: Long,
     val type: String,
-    val path: String,
+
     val lastModified: Long,
     val downloadUrl: String,
     val location:String,

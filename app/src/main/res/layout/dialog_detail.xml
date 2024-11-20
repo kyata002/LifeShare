@@ -70,6 +70,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="ExampleFile.txt"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:textSize="@dimen/_14sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvFileNameLabel"
@@ -164,9 +166,12 @@
                 android:layout_height="wrap_content"
                 android:text="path/to/file/ExampleFile.txt"
                 android:textSize="@dimen/_14sdp"
+                android:ellipsize="end"
+                android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvFilePathLabel"
                 app:layout_constraintTop_toTopOf="@id/tvFilePathLabel" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

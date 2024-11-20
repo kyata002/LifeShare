@@ -20,18 +20,26 @@ class DetailDialog : AppCompatActivity() {
 
         val fileCloud = intent.getSerializableExtra("FILE_DETAILS") as? FileCloud
         val fileApp = intent.getSerializableExtra("FILE_DETAILS") as? FileApp
+        val fileType = intent.getStringExtra("FILE_TYPE")
+
+
+        if(fileType=="CLOUD"){
+            fileCloud?.let { displayFileAppShare(it) }
+        }else{
+            if (fileCloud != null) {
+                // Hiển thị chi tiết cho FileCloud
+                displayFileCloudDetails(fileCloud)
+            } else if (fileApp != null) {
+                // Hiển thị chi tiết cho FileApp
+                displayFileAppDetails(fileApp)
+            } else {
+                // Trường hợp không xác định được loại file
+                binding.tvFileName.text = "Không xác định loại file"
+            }
+        }
 
         // Display file details if available
-        if (fileCloud != null) {
-            // Hiển thị chi tiết cho FileCloud
-            displayFileCloudDetails(fileCloud)
-        } else if (fileApp != null) {
-            // Hiển thị chi tiết cho FileApp
-            displayFileAppDetails(fileApp)
-        } else {
-            // Trường hợp không xác định được loại file
-            binding.tvFileName.text = "Không xác định loại file"
-        }
+
 
         // Đóng dialog khi nhấn nút
         binding.main1.setOnClickListener {
@@ -42,7 +50,7 @@ class DetailDialog : AppCompatActivity() {
         binding.tvFileName.text = file.name
         binding.tvFileSize.text = getSizeText(file.size)
         binding.tvFileType.text = file.type
-        binding.tvFilePath.text = file.path
+        binding.tvFilePath.text = file.downloadUrl
         binding.tvLastModified.text = formatDate(file.lastModified)
     }
     private fun displayFileAppDetails(file: FileApp) {
@@ -50,6 +58,13 @@ class DetailDialog : AppCompatActivity() {
         binding.tvFileSize.text = getSizeText(file.size)
         binding.tvFileType.text = file.type
         binding.tvFilePath.text = file.path
+        binding.tvLastModified.text = formatDate(file.lastModified)
+    }
+    private fun displayFileAppShare(file: FileCloud) {
+        binding.tvFileName.text = file.name
+        binding.tvFileSize.text = getSizeText(file.size)
+        binding.tvFileType.text = file.type
+        binding.tvFilePath.text = file.downloadUrl
         binding.tvLastModified.text = formatDate(file.lastModified)
     }
     private fun getSizeText(size: Long): String {
