@@ -1,5 +1,6 @@
 package com.example.doan.Adapter
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.*
@@ -302,8 +303,112 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
         }
 
 
+        @SuppressLint("MissingInflatedId")
         private fun shareFile(context: Context, file: FileCloud) {
-            // Implementation for file sharing
+            val context = itemView.context
+
+            // Inflate the custom layout
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_share_file, null)
+
+            // Create the AlertDialog and set the custom view
+            val alertDialog = AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create()
+
+            // Ensure the background from the layout is used; no need to manually set a transparent background
+            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+            // Handle button clicks
+            val btnCancel = dialogView.findViewById<AppCompatTextView>(R.id.btnCancelS)
+            val btnAccess = dialogView.findViewById<AppCompatTextView>(R.id.btnAccess)
+            val etEmail = dialogView.findViewById<EditText>(R.id.etEmailS)
+            val tvWarring = dialogView.findViewById<TextView>(R.id.tvWarring)
+
+            val rbCommunityS = dialogView.findViewById<RadioButton>(R.id.rbCommunityS)
+            val rbPersonalS = dialogView.findViewById<RadioButton>(R.id.rbPersonalS)
+
+            val rgShareOptions = dialogView.findViewById<RadioGroup>(R.id.rgShareOptions)
+
+            // Initially, set EditText visibility based on the selected RadioButton
+            rgShareOptions.setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.rbCommunityS -> {
+                        etEmail.visibility = View.GONE // Hide input field for "Community Share"
+                    }
+                    R.id.rbPersonalS -> {
+                        etEmail.visibility = View.VISIBLE // Show input field for "Personal Share"
+                    }
+                }
+            }
+
+            btnCancel.setOnClickListener {
+                // Dismiss the dialog when the "Cancel" button is clicked
+                alertDialog.dismiss()
+            }
+
+            btnAccess.setOnClickListener {
+                if (rbPersonalS.isChecked) {
+                    val email = etEmail.text.toString().trim()
+                    // Check if the input is a valid email
+                    if (email.isEmpty()) {
+                        tvWarring.visibility = View.VISIBLE
+                        tvWarring.setText("Hãy nhập email muốn chia sẻ")
+                    } else if (!isValidEmail(email)) {
+                        tvWarring.visibility = View.VISIBLE
+                        tvWarring.setText("Email không đúng cấu trúc")
+                    } else {
+                        tvWarring.visibility = View.GONE
+                        alertDialog.dismiss()
+                    }
+                } else if (rbCommunityS.isChecked) {
+                    // Tham chiếu tới nút "pdfs" trong Firebase Realtime Database
+                    val databaseReference = FirebaseDatabase.getInstance().getReference("Community")
+
+                    // Sử dụng fileId làm khóa trong nút "pdfs"
+                    val fileIdKey = file.fileId
+
+                    // Tạo dữ liệu file để lưu trữ
+                    val fileData = mapOf(
+                        "fileId" to file.fileId,
+                        "name" to file.name,
+                        "type" to file.type,
+                        "size" to file.size,
+                        "lastModified" to file.lastModified,
+                        "location" to file.location,
+                        "downloadUrl" to file.downloadUrl
+                    )
+
+                    // Lưu dữ liệu vào Firebase Realtime Database
+                    databaseReference.child(fileIdKey.toString()).setValue(fileData)
+                        .addOnSuccessListener {
+                            // Hiển thị thông báo thành công
+                            Toast.makeText(
+                                context,
+                                "File shared to the community successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        .addOnFailureListener { exception ->
+                            // Hiển thị thông báo lỗi
+                            Toast.makeText(
+                                context,
+                                "Failed to share file: ${exception.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    // Đóng dialog
+                    alertDialog.dismiss()
+                }
+            }
+
+
+            // Show the dialog
+            alertDialog.show()
         }
+        private fun isValidEmail(email: String): Boolean {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        }
+
     }
 }

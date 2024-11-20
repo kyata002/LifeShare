@@ -129,8 +129,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                                 val sanitizedEmail = FirebaseAuth.getInstance().currentUser?.email
                                     ?.replace(".", "")?.replace("@", "")
                                 if (sanitizedEmail != null) {
-                                    val userRef =
-                                        FirebaseDatabase.getInstance().getReference("users").child(sanitizedEmail)
+                                    val userRef = FirebaseDatabase.getInstance().getReference("users").child(sanitizedEmail)
 
                                     userRef.child("listAppUp")
                                         .addListenerForSingleValueEvent(object : ValueEventListener {
