@@ -23,8 +23,7 @@ class FileCommunityFragment : Fragment() {
     private lateinit var progressBar: ProgressBar  // Progress bar for loading indication
 
     private val database = FirebaseDatabase.getInstance()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid
-    private val userRef = userId?.let { database.getReference("users").child(it).child("listAppUp") }
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,51 +38,86 @@ class FileCommunityFragment : Fragment() {
         // Show the ProgressBar while loading data
         progressBar.visibility = View.VISIBLE
 
-        // Fetch the list of files from Firebase
-        userRef?.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // Hide the ProgressBar once data is loaded
-                progressBar.visibility = View.GONE
+        // Get the current user
+        val user = auth.currentUser
+        if (user != null) {
+            // Sanitize the email to create a valid Firebase key
+            val sanitizedEmail = user.email?.sanitizeEmail()
+            if (sanitizedEmail != null) {
+                // Reference to the user's listAppUp node using sanitized email
+                val userRef = database.getReference("users").child(sanitizedEmail).child("listAppUp")
 
-                if (snapshot.exists()) {
-                    val filesList = mutableListOf<FileCloud>()
+                // Fetch the list of files from Firebase
+                userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        // Hide the ProgressBar once data is loaded
+                        progressBar.visibility = View.GONE
 
-                    // Populate the list with data from the snapshot
-                    for (fileSnapshot in snapshot.children) {
-                        val name = fileSnapshot.child("name").getValue(String::class.java) ?: ""
-                        val size = fileSnapshot.child("size").getValue(Long::class.java) ?: 0L
-                        val type = fileSnapshot.child("type").getValue(String::class.java) ?: ""
-                        val path = fileSnapshot.child("path").getValue(String::class.java) ?: ""
-                        val lastModified = fileSnapshot.child("lastModified").getValue(Long::class.java) ?: 0L
-                        val downloadUrl = fileSnapshot.child("downloadUrl").getValue(String::class.java) ?: ""
-                        val fileId = fileSnapshot.child("fileId").getValue(Int::class.java) ?: 0
+                        if (snapshot.exists()) {
+                            val filesList = mutableListOf<FileCloud>()
 
-                        // Create a FileCloud object and add it to the list
-                        val file = FileCloud(name, size, type, path, lastModified, downloadUrl, fileId)
-                        filesList.add(file)
+                            // Populate the list with data from the snapshot
+                            for (fileSnapshot in snapshot.children) {
+                                val name = fileSnapshot.child("name").getValue(String::class.java) ?: ""
+                                val size = fileSnapshot.child("size").getValue(Long::class.java) ?: 0L
+                                val type = fileSnapshot.child("type").getValue(String::class.java) ?: ""
+                                val path = fileSnapshot.child("path").getValue(String::class.java) ?: ""
+                                val lastModified = fileSnapshot.child("lastModified").getValue(Long::class.java) ?: 0L
+                                val downloadUrl = fileSnapshot.child("downloadUrl").getValue(String::class.java) ?: ""
+                                val fileId = fileSnapshot.child("fileId").getValue(Int::class.java) ?: 0
+                                val location = fileSnapshot.child("location").getValue(String::class.java) ?: ""
+
+                                // Create a FileCloud object and add it to the list
+                                val file = FileCloud(name, size, type, path, lastModified, downloadUrl, location, fileId)
+                                filesList.add(file)
+                            }
+
+                            if (filesList.isNotEmpty()) {
+                                fileList = filesList
+
+                                // Initialize RecyclerView and Adapter with data
+                                recyclerView = view.findViewById(R.id.rcv_file_Up)
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+
+                                fileUpAdapter = FileUpAdapter(fileList)
+                                recyclerView.adapter = fileUpAdapter
+
+                                // Show a Toast message with the number of files
+                                Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "No files found in listAppUp", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "No data snapshot exists in listAppUp", Toast.LENGTH_SHORT).show()
+                        }
+
                     }
-                    fileList = filesList
 
-                    // Initialize RecyclerView and Adapter with data
-                    recyclerView = view.findViewById(R.id.rcv_file_Up)
-                    recyclerView.layoutManager = LinearLayoutManager(context)
-                    fileUpAdapter = FileUpAdapter(fileList)
-                    recyclerView.adapter = fileUpAdapter
-
-                    // Show a Toast message with the number of files
-                    Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "No files found in listAppUp", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Hide the ProgressBar if there's an error
+                    override fun onCancelled(error: DatabaseError) {
+                        // Hide the ProgressBar if there's an error
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(context, "Failed to fetch files: ${error.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            } else {
+                // Handle case where email is null
                 progressBar.visibility = View.GONE
-                Toast.makeText(context, "Failed to fetch files: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "User email not found.", Toast.LENGTH_SHORT).show()
             }
-        })
+        } else {
+            // Handle case where user is not authenticated
+            progressBar.visibility = View.GONE
+            Toast.makeText(context, "No authenticated user found.", Toast.LENGTH_SHORT).show()
+        }
 
         return view
     }
+
+    /**
+     * Extension function to sanitize email by removing '.' and '@' characters.
+     */
+    private fun String.sanitizeEmail(): String {
+        return this.replace(".", "").replace("@", "")
+    }
+
 }

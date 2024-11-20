@@ -4,7 +4,7 @@
     android:id="@+id/repass_border"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C3000000"
+    android:background="#33000000"
     >
 
     <LinearLayout

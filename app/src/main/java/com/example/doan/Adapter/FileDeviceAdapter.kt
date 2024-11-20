@@ -17,6 +17,7 @@ import android.widget.ListPopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
 import com.example.doan.data.model.FileCloud
@@ -93,17 +94,17 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 val fileUri = Uri.fromFile(File(file.path))
                 val fileRef = storageRef.child("uploads/${file.name}")
 
-                // Inflate the custom layout for the progress dialog
+// Inflate the custom layout for the progress dialog
                 val dialogView =
                     LayoutInflater.from(context).inflate(R.layout.dialog_upload_status, null)
                 val dialogIcon: ImageView = dialogView.findViewById(R.id.dialog_icon)
                 val dialogMessage: TextView = dialogView.findViewById(R.id.dialog_message)
 
-                // Configure the dialog content
-                dialogMessage.text = "Tài liệu đang tải lên..."
-                dialogIcon.setImageResource(R.drawable.ic_upload_filde)  // Uploading icon
+// Configure the dialog content
+                dialogMessage.text = "Đang tải tài liệu lên..."
+                dialogIcon.setImageResource(R.drawable.ic_upload_filde)
 
-                // Create and show the progress dialog
+// Create and show the progress dialog
                 val progressDialog = AlertDialog.Builder(context)
                     .setView(dialogView)
                     .setCancelable(false)
@@ -111,72 +112,85 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 progressDialog.show()
 
-                // Check if the file already exists in Firebase Storage
+// Kiểm tra nếu file đã tồn tại trong Firebase Storage
                 fileRef.metadata.addOnSuccessListener {
-                    // File exists, handle accordingly
-                    dialogMessage.text = "Tài liệu đã tồn tại. Dừng tải lên."
-                    dialogIcon.setImageResource(R.drawable.ic_warning)  // Warning icon
+                    // File đã tồn tại, thông báo dừng upload
+                    dialogMessage.text = "File đã tồn tại. Không tải lên nữa."
+                    dialogIcon.setImageResource(R.drawable.ic_warning)
                     progressDialog.dismissAfterDelay(1500)
                 }.addOnFailureListener {
-                    // File doesn't exist, proceed to upload
+                    // File không tồn tại, tiếp tục tải lên
                     fileRef.putFile(fileUri)
-                        .addOnSuccessListener {
-                            dialogMessage.text = "Tải tài liệu lên thành công!"
-                            dialogIcon.setImageResource(R.drawable.ic_success)  // Success icon
+                        .addOnSuccessListener { uploadTask ->
+                            dialogMessage.text = "Tải lên thành công!"
+                            dialogIcon.setImageResource(R.drawable.ic_success)
 
                             fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                                val userId = FirebaseAuth.getInstance().currentUser?.uid
-                                if (userId != null) {
-                                    val userRef = FirebaseDatabase.getInstance().getReference("users")
-                                        .child(userId)
+                                val sanitizedEmail = FirebaseAuth.getInstance().currentUser?.email
+                                    ?.replace(".", "")?.replace("@", "")
+                                if (sanitizedEmail != null) {
+                                    val userRef =
+                                        FirebaseDatabase.getInstance().getReference("users").child(sanitizedEmail)
 
-                                    userRef.child("listAppUp").addListenerForSingleValueEvent(object :
-                                        ValueEventListener {
-                                        override fun onDataChange(snapshot: DataSnapshot) {
-                                            val currentFiles = snapshot.children.toList()
-                                            val nextId = currentFiles.size + 1  // Increment for the next file ID
+                                    userRef.child("listAppUp")
+                                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                val nextId = (snapshot.childrenCount + 1).toInt()
 
-                                            val uploadedFile = FileCloud(
-                                                name = file.name,
-                                                path = file.path,
-                                                type = file.type,
-                                                size = file.size,
-                                                lastModified = file.lastModified,
-                                                downloadUrl = downloadUri.toString(),
-                                                fileId = nextId
-                                            )
+                                                val uploadedFile = FileCloud(
+                                                    name = file.name,
+                                                    size = file.size,
+                                                    type = file.type,
+                                                    path = file.path,
+                                                    lastModified = file.lastModified,
+                                                    downloadUrl = downloadUri.toString(),
+                                                    location = "uploads/${file.name}",
+                                                    fileId = nextId
+                                                )
 
-                                            userRef.child("listAppUp").child(nextId.toString())
-                                                .setValue(uploadedFile)
-                                                .addOnSuccessListener {
-                                                    progressDialog.dismissAfterDelay(1500)
-//                                                    Toast.makeText(context, "File added to listAppUp!", Toast.LENGTH_SHORT).show()
-                                                }
-                                                .addOnFailureListener {
-                                                    progressDialog.dismissAfterDelay(1500)
-//                                                    Toast.makeText(context, "Failed to update listAppUp.", Toast.LENGTH_SHORT).show()
-                                                }
-                                        }
+                                                userRef.child("listAppUp").child(nextId.toString())
+                                                    .setValue(uploadedFile)
+                                                    .addOnSuccessListener {
+                                                        dialogMessage.text =
+                                                            "File đã được thêm vào danh sách thành công!"
+                                                        dialogIcon.setImageResource(R.drawable.ic_success)
+                                                        progressDialog.dismissAfterDelay(1500)
+                                                    }
+                                                    .addOnFailureListener {
+                                                        dialogMessage.text =
+                                                            "Lỗi: Không thể thêm file vào danh sách."
+                                                        dialogIcon.setImageResource(R.drawable.ic_failed)
+                                                        progressDialog.dismissAfterDelay(1500)
+                                                    }
+                                            }
 
-                                        override fun onCancelled(error: DatabaseError) {
-                                            progressDialog.dismissAfterDelay(1500)
-//                                            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                                        }
-                                    })
+                                            override fun onCancelled(error: DatabaseError) {
+                                                dialogMessage.text = "Lỗi khi truy xuất dữ liệu: ${error.message}"
+                                                dialogIcon.setImageResource(R.drawable.ic_failed)
+                                                progressDialog.dismissAfterDelay(1500)
+                                            }
+                                        })
+                                } else {
+                                    dialogMessage.text = "Lỗi: Không xác định được người dùng."
+                                    dialogIcon.setImageResource(R.drawable.ic_failed)
+                                    progressDialog.dismissAfterDelay(1500)
                                 }
                             }.addOnFailureListener { downloadException ->
-                                dialogMessage.text = "Lỗi lấy link tải: ${downloadException.message}"
-                                dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
+                                dialogMessage.text = "Lỗi khi lấy đường dẫn tải: ${downloadException.message}"
+                                dialogIcon.setImageResource(R.drawable.ic_failed)
                                 progressDialog.dismissAfterDelay(1500)
                             }
                         }
                         .addOnFailureListener { uploadException ->
                             dialogMessage.text = "Tải lên thất bại: ${uploadException.message}"
-                            dialogIcon.setImageResource(R.drawable.ic_failed)  // Failure icon
+                            dialogIcon.setImageResource(R.drawable.ic_failed)
                             progressDialog.dismissAfterDelay(1500)
                         }
                 }
             }
+
+            // Extension function to dismiss dialog after a delay
+
 
             itemView.setOnClickListener {
                 when (file.type) {
@@ -186,6 +200,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                         }
                         (context as AppCompatActivity).startActivity(intent)
                     }
+
                     "mp4" -> {
                         val intent = Intent(context, VideoPlayerActivity::class.java).apply {
                             putExtra("FILE_PATH", file.path)
@@ -193,6 +208,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                         (context as AppCompatActivity).startActivity(intent)
 
                     }
+
                     "txt" -> {
                         val intent = Intent(context, TxtViewActivity::class.java).apply {
                             putExtra("FILE_PATH", file.path)
@@ -200,6 +216,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                         (context as AppCompatActivity).startActivity(intent)
 
                     }
+
                     "docx" -> {
 //                        val intent = Intent(context, DocxViewActivity::class.java).apply {
 //                            putExtra("FILE_PATH", file.path)
@@ -214,6 +231,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                         }
                         (context as AppCompatActivity).startActivity(intent)
                     }
+
                     "xlsx" -> {
 //                        val intent = Intent(context, ExcelViewActivity::class.java).apply {
 //                            putExtra("FILE_PATH", file.path)
@@ -229,8 +247,8 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
             }
 
 
-
         }
+
         fun AlertDialog.dismissAfterDelay(delayMillis: Long) {
             Handler(Looper.getMainLooper()).postDelayed({ this.dismiss() }, delayMillis)
         }
@@ -253,6 +271,7 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                 .setCancelable(false)
                 .show()
         }
+
         private fun showCustomPopupMenu(view: View, file: FileApp) {
             val listPopupWindow = ListPopupWindow(view.context)
             val menuItems = listOf(
@@ -289,15 +308,39 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
         }
 
         private fun showDeleteDialog(file: FileApp, position: Int) {
-            val intent = Intent(context, DeleteDialog::class.java)
-            intent.putExtra("FILE_PATH", file.path)
-            intent.putExtra("FILE_POSITION", position)
-            (context as AppCompatActivity).startActivityForResult(intent, DELETE_FILE_REQUEST_CODE)
+            val context = itemView.context
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_delete, null)
+
+            val alertDialog = android.app.AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create()
+
+// Set the custom background if needed (optional)
+            alertDialog.window?.setBackgroundDrawableResource(R.drawable.transparent_background)  // Optional if you want to change the default background
+
+// Handle button clicks
+            val btnCancel = dialogView.findViewById<AppCompatTextView>(R.id.btnCancel)
+            val btnDelete = dialogView.findViewById<AppCompatTextView>(R.id.btnDelete)
+
+            btnCancel.setOnClickListener {
+                alertDialog.dismiss()  // Handle cancel button action
+            }
+
+            btnDelete.setOnClickListener {
+                var fileToDelete = File(file.path)
+                if (fileToDelete.exists() && fileToDelete.delete()) {
+                    updateFileListAfterDeletion(file)
+                }
+                alertDialog.dismiss()
+            }
+
+            alertDialog.show()
         }
 
         private fun showRenameDialog(file: FileApp, position: Int) {
             val intent = Intent(context, RenameDialog::class.java)
             intent.putExtra("FILE_PATH", file.path)
+            intent.putExtra("FILE_TYPE", "DEVICE")
             intent.putExtra("FILE_POSITION", position)
             (context as AppCompatActivity).startActivityForResult(intent, RENAME_FILE_REQUEST_CODE)
         }
@@ -336,6 +379,16 @@ class FileDeviceAdapter(private var files: List<FileApp>) :
                     sizeKB
                 )
             }"
+        }
+    }
+    private fun updateFileListAfterDeletion(file: FileApp) {
+        val position = files.indexOf(file)
+        if (position >= 0) {
+            // Remove the file from the file list
+            files = files.toMutableList().apply { removeAt(position) }
+
+            // Notify the adapter that an item has been removed
+            notifyItemRemoved(position)
         }
     }
 

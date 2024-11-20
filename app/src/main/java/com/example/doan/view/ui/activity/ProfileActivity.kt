@@ -89,7 +89,9 @@ class ProfileActivity : AppCompatActivity() {
     private fun fetchUserProfile() {
         val user = auth.currentUser
         if (user != null) {
-            val userId = user.uid
+            // Use sanitized email as user ID
+            val userId = user.email?.replace(".", "")?.replace("@", "") ?: return
+
             database.child("users").child(userId).get()
                 .addOnSuccessListener { dataSnapshot ->
                     if (dataSnapshot.exists()) {
@@ -116,10 +118,12 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+
     private fun saveUserProfile() {
         val user = auth.currentUser
         if (user != null) {
-            val userId = user.uid
+            // Use sanitized email as user ID
+            val userId = user.email?.replace(".", "")?.replace("@", "") ?: return
 
             // Collect data from EditTexts
             val updatedUsername = binding.etUsername.text.toString()
@@ -133,7 +137,7 @@ class ProfileActivity : AppCompatActivity() {
                 "phone" to updatedPhoneNumber
             )
 
-            // Update the database
+            // Update the database using the sanitized email as ID
             database.child("users").child(userId).updateChildren(updates)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
@@ -143,6 +147,7 @@ class ProfileActivity : AppCompatActivity() {
                 }
         }
     }
+
 
     private fun hideEditableFields() {
         val editTexts = listOf(binding.etUsername, binding.etEmail, binding.etPhoneNumber)

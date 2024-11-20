@@ -73,12 +73,13 @@ class RegisterActivity : AppCompatActivity() {
                     // User registered successfully
                     val firebaseUser: FirebaseUser? = auth.currentUser
                     if (firebaseUser != null) {
-                        val userId = firebaseUser.uid
+                        // Use email as the user ID, sanitize it to avoid invalid characters in the Firebase path
+                        val userId = email.replace(".", "").replace("@", "") // Remove dots and at symbol
                         val userRef: DatabaseReference = mDatabase!!.child(userId) // Create reference to user's node
 
                         // Create the AccountModel object
                         val user = AccountModel(
-                            id = userId,           // Pass the Firebase UID as id
+                            id = userId,           // Use the sanitized email as ID
                             username = username,
                             email = email,
                             password = password,   // Consider removing this from the database for security
@@ -122,6 +123,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
     }
+
 
 
     @SuppressLint("ObsoleteSdkInt")
