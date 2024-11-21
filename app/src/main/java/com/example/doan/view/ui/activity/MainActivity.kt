@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         setupViewPagerWithTabs()
         saveSortOption("clear")
 
+//        binding.main.setOnClickListener {
+//            navigateToActivity()
+//        }
 
         binding.btnAccount.setOnClickListener {
             if(!isUserLoggedIn()){

@@ -66,6 +66,7 @@ class FileCommunityFragment : Fragment() {
                         // Hide the ProgressBar once data is loaded
                         progressBar.visibility = View.GONE
 
+
                         if (snapshot.exists()) {
 
                             // Populate the list with data from the snapshot

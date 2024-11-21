@@ -163,7 +163,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
 
             listPopupWindow.setOnItemClickListener { _, _, position, _ ->
                 when (position) {
-                    0 -> shareFile(view.context, file)
+                    0 -> shareFile( file)
                     1 -> showRenameDialog(file)
                     2 -> showDeleteDialog(file)
                     3 -> showDetailDialog(file)
@@ -331,7 +331,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
 
 
         @SuppressLint("MissingInflatedId")
-        private fun shareFile(context: Context, file: FileCloud) {
+        private fun shareFile( file: FileCloud) {
             val context = itemView.context
 
             // Inflate the custom layout

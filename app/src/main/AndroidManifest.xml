@@ -66,7 +66,7 @@
         <activity
             android:name=".view.ui.dialog.PermissionRequestDialog"
             android:exported="false"
-            android:theme="@style/Transparent" />
+            />
         <activity
             android:name=".view.ui.activity.MainActivity"
             android:exported="false" />
