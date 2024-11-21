@@ -105,15 +105,14 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(binding.tabMenu, binding.viewPage) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "File Device"
-                    tab.setIcon(R.drawable.ic_file_device)
+                    tab.text = "Thiết Bị"
                 }
                 1 -> {
-                    tab.text = "File Com"
+                    tab.text = "Đám Mây"
                     tab.setIcon(R.drawable.ic_file_community)
                 }
                 2 -> {
-                    tab.text = "File Share"
+                    tab.text = "Chia Sẻ"
                     tab.setIcon(R.drawable.ic_file_share)
                 }
             }

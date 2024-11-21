@@ -1,5 +1,6 @@
 package com.example.doan.view.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -34,18 +36,19 @@ class FileShareFragment : Fragment() {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private lateinit var tvCom: TextView
-    val filesList = mutableListOf<FileCloud>()
     private lateinit var tvShare: TextView
     private lateinit var btnSort: ImageView
+    private lateinit var imgNotFound: LinearLayout
     private  var isCheck: Boolean = true
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_file_share, container, false)
-
+        imgNotFound = view.findViewById(R.id.img_NotFound1)
         // Initialize UI components
         progressBar = view.findViewById(R.id.progressBarS)
         rcvFileShare = view.findViewById(R.id.rcv_file_Share)
@@ -168,7 +171,7 @@ class FileShareFragment : Fragment() {
 
                     if (snapshot.exists()) {
                         val filesList = mutableListOf<FileCloud>()
-                        
+
                         // Populate the list with data from the snapshot
                         for (fileSnapshot in snapshot.children) {
                             val name = fileSnapshot.child("name").getValue(String::class.java) ?: ""
@@ -194,13 +197,16 @@ class FileShareFragment : Fragment() {
 
                             fileShareFileAdapter = FileShareFileAdapter(fileListShare)
                             rcvFileShare.adapter = fileShareFileAdapter
-
+                            imgNotFound.visibility = View.GONE
                             // Show a Toast message with the number of files
 //                            Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
                         } else {
+                            imgNotFound.visibility = View.VISIBLE
+
                             Toast.makeText(context, "Không có tài liệu được tải lên", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        imgNotFound.visibility = View.VISIBLE
                         Toast.makeText(context, "Lấy dữ liệu tài liệu thất bại", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -257,13 +263,16 @@ class FileShareFragment : Fragment() {
 
                             fileShareAdapter = FileCommunityAdapter(fileListShare)
                             rcvFileCommunity.adapter = fileShareAdapter
+                            imgNotFound.visibility = View.GONE
 
                             // Show a Toast message with the number of files
 //                            Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
                         } else {
+                            imgNotFound.visibility = View.VISIBLE
                             Toast.makeText(context, "Không có tài liệu được tải lên", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        imgNotFound.visibility = View.VISIBLE
                         Toast.makeText(context, "Tài liệu không tồn tại.", Toast.LENGTH_SHORT).show()
                     }
                 }

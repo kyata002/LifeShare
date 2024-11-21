@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -34,6 +35,7 @@ class FileCommunityFragment : Fragment() {
     private var fileList: List<FileCloud> = emptyList()  // List to hold FileCloud objects
     private lateinit var progressBar: ProgressBar  // Progress bar for loading indication
     private lateinit var btnSort: ImageView
+    private lateinit var imgNotFound: LinearLayout
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -43,7 +45,7 @@ class FileCommunityFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_file_community, container, false)
-
+        imgNotFound = view.findViewById(R.id.img_NotFound)
         // Initialize ProgressBar
         progressBar = view.findViewById(R.id.progressBar)
 
@@ -113,9 +115,10 @@ class FileCommunityFragment : Fragment() {
 
                                 fileUpAdapter = FileUpAdapter(fileList)
                                 recyclerView.adapter = fileUpAdapter
-
+                                imgNotFound.visibility = View.GONE
 
                             } else {
+                                imgNotFound.visibility = View.VISIBLE
                                 Toast.makeText(
                                     context,
                                     "Không có tài liệu được tải lên",
@@ -123,6 +126,7 @@ class FileCommunityFragment : Fragment() {
                                 ).show()
                             }
                         } else {
+                            imgNotFound.visibility = View.VISIBLE
                             Toast.makeText(
                                 context,
                                 "Không có tài liệu được tải lên",
@@ -323,9 +327,11 @@ class FileCommunityFragment : Fragment() {
 
                                 fileUpAdapter = FileUpAdapter(fileList)
                                 recyclerView.adapter = fileUpAdapter
+                                imgNotFound.visibility = View.GONE
 
                                 // Show a Toast message with the number of files
                             } else {
+                                imgNotFound.visibility = View.VISIBLE
                                 Toast.makeText(
                                     context,
                                     "Không có tài liệu được tải lên",
@@ -333,6 +339,7 @@ class FileCommunityFragment : Fragment() {
                                 ).show()
                             }
                         } else {
+                            imgNotFound.visibility = View.VISIBLE
                             Toast.makeText(
                                 context,
                                 "Không có tài liệu được tải lên",

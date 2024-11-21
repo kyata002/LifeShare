@@ -57,7 +57,7 @@
             android:textSize="@dimen/_12sdp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:text="Tên"
+            android:text="Tên:"
             android:textStyle="bold" />
 
         <TextView
@@ -173,6 +173,50 @@
 
         <ImageView
             android:id="@+id/ivEditPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit Phone Number"
+            android:src="@drawable/ic_edit" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="@drawable/bg_row_profile"
+        android:padding="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:weightSum="12">
+
+        <TextView
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Mật khẩu:"
+            android:textStyle="bold" />
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/tvPassword"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:text="*************" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:visibility="gone"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:text="+1234567890"/>
+
+        <ImageView
+            android:id="@+id/ivEditPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="Edit Phone Number"
