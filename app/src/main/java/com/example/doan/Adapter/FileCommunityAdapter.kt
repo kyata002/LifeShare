@@ -10,10 +10,13 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
@@ -50,9 +53,30 @@ class FileCommunityAdapter(private var fileList: List<FileCloud>) : RecyclerView
         holder.binding.btnDetails.setOnClickListener {
             showDetailDialog(context,file)
         }
+        holder.itemView.setOnClickListener {
+            val dialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_upload_status, null)
+            val dialogIcon: ImageView = dialogView.findViewById(R.id.dialog_icon)
+            val dialogMessage: TextView = dialogView.findViewById(R.id.dialog_message)
+
+// Configure the dialog content
+            dialogMessage.text = "Hãy tải tài liệu xuống để mở"
+            dialogIcon.setImageResource(R.drawable.ic_warning)
+
+// Create and show the progress dialog
+            val progressDialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+            progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            progressDialog.show()
+            progressDialog.dismissAfterDelay(1500)
+        }
         setFileIcon(file, holder.binding.imgViewFiles)
     }
-
+    fun androidx.appcompat.app.AlertDialog.dismissAfterDelay(delayMillis: Long) {
+        Handler(Looper.getMainLooper()).postDelayed({ this.dismiss() }, delayMillis)
+    }
     private fun showDetailDialog(context: Context,file: FileCloud) {
         val intent = Intent(context, DetailDialog::class.java).apply {
             putExtra("FILE_DETAILS", file)
@@ -87,7 +111,7 @@ class FileCommunityAdapter(private var fileList: List<FileCloud>) : RecyclerView
                 val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                 if (id == downloadId) {
                     downloadDialog.dismiss()
-                    Toast.makeText(context, "Tải xuống $fileName thành công", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "Tải xuống $fileName thành công", Toast.LENGTH_SHORT).show()
                     try {
                         context?.unregisterReceiver(this)
                     } catch (e: Exception) {

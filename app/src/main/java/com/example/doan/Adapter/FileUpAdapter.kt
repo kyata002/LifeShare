@@ -12,7 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan.R
@@ -32,8 +34,9 @@ import java.util.*
 
 class FileUpAdapter(private var fileList: List<FileCloud>) :
     RecyclerView.Adapter<FileUpAdapter.FileViewHolder>() {
-
+    lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
+        context = parent.context
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_file_cloud, parent, false)
         return FileViewHolder(view)
@@ -74,8 +77,31 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
                     downloadFile(file.name, file.downloadUrl)
                 }
             }
-        }
+            itemView.setOnClickListener {
+                val dialogView =
+                    LayoutInflater.from(context).inflate(R.layout.dialog_upload_status, null)
+                val dialogIcon: ImageView = dialogView.findViewById(R.id.dialog_icon)
+                val dialogMessage: TextView = dialogView.findViewById(R.id.dialog_message)
 
+// Configure the dialog content
+                dialogMessage.text = "Hãy tải tài liệu xuống để mở"
+                dialogIcon.setImageResource(R.drawable.ic_warning)
+
+// Create and show the progress dialog
+                val progressDialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .create()
+                progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                progressDialog.show()
+                progressDialog.dismissAfterDelay(1500)
+
+            }
+
+        }
+        fun androidx.appcompat.app.AlertDialog.dismissAfterDelay(delayMillis: Long) {
+            Handler(Looper.getMainLooper()).postDelayed({ this.dismiss() }, delayMillis)
+        }
 
         @RequiresApi(Build.VERSION_CODES.O)
         private fun downloadFile(fileName: String, fileUrl: String) {
@@ -426,7 +452,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
                             // Hiển thị thông báo thành công
                             Toast.makeText(
                                 context,
-                                "File shared to the community successfully!",
+                                "Tài liệu đã chia sẻ thành công!",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -434,7 +460,7 @@ class FileUpAdapter(private var fileList: List<FileCloud>) :
                             // Hiển thị thông báo lỗi
                             Toast.makeText(
                                 context,
-                                "Failed to share file: ${exception.message}",
+                                "Tài liệu chia sẻ thất bại: ${exception.message}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

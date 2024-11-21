@@ -258,22 +258,22 @@ class FileShareFragment : Fragment() {
                             rcvFileCommunity.adapter = fileShareAdapter
 
                             // Show a Toast message with the number of files
-                            Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(context, "Fetched ${filesList.size} files", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "No files found in listAppUp", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Không có tài liệu được tải lên", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(context, "No files found.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Tài liệu không tồn tại.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    showError("Failed to load files: ${error.message}")
+                    showError("Lấy dữ liệu tài liệu thất bại: ${error.message}")
                 }
             })
         } else {
             progressBar.visibility = View.GONE
-            Toast.makeText(context, "No authenticated user found.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Không có tài khoản tồn tại.", Toast.LENGTH_SHORT).show()
         }
     }
 

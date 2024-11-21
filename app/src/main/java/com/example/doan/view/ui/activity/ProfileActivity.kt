@@ -109,11 +109,11 @@ class ProfileActivity : AppCompatActivity() {
                         binding.etEmail.setText(email)
                         binding.etPhoneNumber.setText(phoneNumber)
                     } else {
-                        Toast.makeText(this, "User profile not found.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Thông tin người dùng không tồn tại.", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Error fetching profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Lỗi lấy dữ liệu thông tin người dùng: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -140,10 +140,10 @@ class ProfileActivity : AppCompatActivity() {
             // Update the database using the sanitized email as ID
             database.child("users").child(userId).updateChildren(updates)
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Thông tin người dùng cập nhật thành công", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Failed to update profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Thông tin người dùng cập nhật thất bại: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }

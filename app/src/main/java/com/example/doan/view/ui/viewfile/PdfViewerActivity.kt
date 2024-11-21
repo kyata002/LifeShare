@@ -28,14 +28,12 @@ class PdfViewerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val filePath = intent.getStringExtra("FILE_PATH") ?: run {
-            Log.e("PdfViewerActivity", "FILE_PATH is null")
             finish()
             return
         }
 
         val pdfFile = File(filePath)
         if (!pdfFile.exists()) {
-            Log.e("PdfViewerActivity", "PDF file does not exist at: $filePath")
             finish()
             return
         }
@@ -45,7 +43,6 @@ class PdfViewerActivity : AppCompatActivity() {
             pdfRenderer = PdfRenderer(fileDescriptor)
             totalPageCount = pdfRenderer.pageCount // Get the total number of pages
         } catch (e: Exception) {
-            Log.e("PdfViewerActivity", "Error initializing PdfRenderer", e)
             finish()
             return
         }

@@ -25,7 +25,7 @@ class ImageViewActivity : AppCompatActivity() {
                 Toast.makeText(this, "Hình ảnh không tồn tại.", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(this, "No file path provided.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Đường dẫn tài liệu không đúng.", Toast.LENGTH_SHORT).show()
         }
 
         // Handle back button click

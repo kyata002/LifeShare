@@ -33,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loginUser(email, password)
             } else {
-                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Hãy nhập email và mật khẩu", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -62,12 +62,12 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                     // Navigate to the main activity or dashboard
                     navigateToActivity(MainActivity::class.java)
                     finish() // Close the login activity
                 } else {
-                    Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Đăng nhập thất bại: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }

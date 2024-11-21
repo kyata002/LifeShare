@@ -33,7 +33,6 @@ class DocxViewActivity : AppCompatActivity() {
                     val docContent = readDocxFile(file)
                     textView.text = docContent
                 } catch (e: IOException) {
-                    Log.e("DocxViewActivity", "Error reading DOCX file", e)
                     textView.text = "Không thể đọc tệp DOCX."
                 }
             } else {

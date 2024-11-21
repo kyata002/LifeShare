@@ -113,23 +113,18 @@ class FileCommunityFragment : Fragment() {
                                 fileUpAdapter = FileUpAdapter(fileList)
                                 recyclerView.adapter = fileUpAdapter
 
-                                // Show a Toast message with the number of files
-                                Toast.makeText(
-                                    context,
-                                    "Fetched ${filesListMul.size} files",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "No files found in listAppUp",
+                                    "Không có tài liệu được tải lên",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         } else {
                             Toast.makeText(
                                 context,
-                                "No data snapshot exists in listAppUp",
+                                "Không có tài liệu được tải lên",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -141,7 +136,7 @@ class FileCommunityFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             context,
-                            "Failed to fetch files: ${error.message}",
+                            "Lấy dữ liệu tài liệu thất bại: ${error.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -149,12 +144,12 @@ class FileCommunityFragment : Fragment() {
             } else {
                 // Handle case where email is null
                 progressBar.visibility = View.GONE
-                Toast.makeText(context, "User email not found.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Email người dùng không tồn tại.", Toast.LENGTH_SHORT).show()
             }
         } else {
             // Handle case where user is not authenticated
             progressBar.visibility = View.GONE
-            Toast.makeText(context, "No authenticated user found.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Không có tài khoản tồn tại.", Toast.LENGTH_SHORT).show()
         }
 
         btnSort = view.findViewById(R.id.btn_sort)
@@ -329,22 +324,17 @@ class FileCommunityFragment : Fragment() {
                                 recyclerView.adapter = fileUpAdapter
 
                                 // Show a Toast message with the number of files
-                                Toast.makeText(
-                                    context,
-                                    "Fetched ${filesList.size} files",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "No files found in listAppUp",
+                                    "Không có tài liệu được tải lên",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         } else {
                             Toast.makeText(
                                 context,
-                                "No data snapshot exists in listAppUp",
+                                "Không có tài liệu được tải lên",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -356,7 +346,7 @@ class FileCommunityFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             context,
-                            "Failed to fetch files: ${error.message}",
+                            "Lấy dữ liệu tài liệu thất bại: ${error.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -364,12 +354,12 @@ class FileCommunityFragment : Fragment() {
             } else {
                 // Handle case where email is null
                 progressBar.visibility = View.GONE
-                Toast.makeText(context, "User email not found.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Email người dùng không tồn tại.", Toast.LENGTH_SHORT).show()
             }
         } else {
             // Handle case where user is not authenticated
             progressBar.visibility = View.GONE
-            Toast.makeText(context, "No authenticated user found.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Không có tài khoản tồn tại.", Toast.LENGTH_SHORT).show()
         }
     }
 

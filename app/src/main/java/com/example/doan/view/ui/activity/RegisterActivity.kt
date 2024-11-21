@@ -107,11 +107,11 @@ class RegisterActivity : AppCompatActivity() {
                             }
                             .addOnFailureListener {
                                 // Handle failure in data saving
-                                Toast.makeText(context, "Failed to save user data", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Lưu dữ liệu người dùng thất bại", Toast.LENGTH_SHORT).show()
                             }
                     } else {
                         // Handle case where currentUser is null
-                        Toast.makeText(context, "User creation failed. Please try again.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Tạo người dùng thất bại. Thực hiện lại.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     // User registration failed

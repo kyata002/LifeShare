@@ -142,17 +142,14 @@ class RenameDialog : AppCompatActivity() {
                                         }
                                         .addOnFailureListener { exception ->
                                             // Handle failure in database update
-                                            Log.e("RenameDialog", "Error updating file name: ${exception.message}")
                                             Toast.makeText(this@RenameDialog, "Cập nhật thất bại: ${exception.message}", Toast.LENGTH_SHORT).show()
                                         }
                                 } else {
-                                    Log.e("RenameDialog", "Failed to update file object: file data is null")
                                     Toast.makeText(this@RenameDialog, "Dữ liệu file không hợp lệ", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                     } else {
-                        Log.e("RenameDialog", "File not found in database")
                         Toast.makeText(this@RenameDialog, "Không tìm thấy file cần cập nhật", Toast.LENGTH_SHORT).show()
                     }
                 }
